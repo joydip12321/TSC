@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <style>
+        /* Custom styles to ensure the menu displays over the image */
+        #Mymenu {
+            z-index: 10; /* Higher z-index to ensure the menu is above the image */
+
+        }
+        .menu-visible {
+            background-color: rgba(98, 135, 160, 0.8); /* Semi-transparent background */
+        }
+         /* Ensure the page takes the full height of the viewport */
+         html, body {
+            height: 100%;
+            margin: 0;
+        }
+        /* Flex container to hold the main content and footer */
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* Main content should take the available space */
+        .flex-content {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body class="">
+    <div class="bg-gradient">
+        <nav class="p-1 sm:p-0 bg-slate-950 flex justify-between sm:justify-center md:justify-end items-center text-center">
+            <div class="flex justify-between items-center w-full md:w-auto"></div>
+            <ul class="flex sm:place-content-center justify-between w-full md:w-auto md:space-x-4 mr-8">
+                <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0">
+                    <a href="https://just.edu.bd/" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">JUST WEBSITE</a>
+                </li>
+                <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0">
+                    <a href="#" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">User Login</a>
+                </li>
+                <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0">
+                    <a href="#" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Admin Login</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    
+
+    <div class="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%">
+        <nav class="p-4 shadow md:flex md:items-center md:justify-between">
+            <div class="flex justify-between items-center ">
+                <span class="font-[Poppins] cursor-pointer">
+                    <div class="inline flex">
+                        <div class="size-20">
+                            <img src="/static/img/JUST_logo.png" alt="">
+                        </div>
+                        <div class="text">
+                            <div class="h-10 inline text-xl font-serif">
+                                <h1>Jashore University of <br>
+                                    Science & Technology</h1>
+                            </div>
+                            <div class="h-7 inline text-2xl">
+                                <h1>JUST TSC</h1>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+
+                <span class="text-3xl cursor-pointer mx-2 md:hidden block">
+                    <ion-icon name="menu" onclick="Menu(this)"></ion-icon>
+                </span>
+            </div>
+
+            <ul id="Mymenu"  class=" md:flex text-white font-mono font-bold md:items-center z-[-1] md:z-auto md:static absolute w-full left-0 md:w-auto md:py-0 py-4 md:pl-0 pl-7 md:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500">
+                <li class="mx-4 my-6 md:my-0 " >
+                    <a href="{% url 'home' %}" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">HOME</a>
+                </li>
+                <li class="mx-4 my-6 md:my-0">
+                    <a href="{% url 'notice' %}" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">NOTICES</a>
+                </li>
+                <li class="mx-4 my-6 md:my-0">
+                    <a href="#" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">BOOKING</a>
+                </li>
+
+                <li class="mx-4 my-6 md:my-0">
+                    <a href="#" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">CONTACT</a>
+                </li>
+
+                <li class="mx-4 my-6 md:my-0">
+                    <a href="#" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">ABOUT US</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <!-- <div>
+        <img src="/static/img/home.jpg" alt="" class="h-80 w-full">
+    </div> -->
+
+    {% block start %} {% endblock %}
+
+
+   <!-- Footer -->
+   <footer class="bg-slate-900 text-white py-6">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-wrap">
+            <!-- Contact Information -->
+            <div class="w-full md:w-1/3 mb-6 md:mb-0">
+                <h5 class="text-lg font-semibold mb-4">Contact Us</h5>
+                <p class="text-sm">
+                    Jashore University of Science & Technology<br>
+                    Jashore, Bangladesh<br>
+                    Email: info@just.edu.bd<br>
+                    Phone: +880 1234 567890
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="w-full md:w-1/3 mb-6 md:mb-0">
+                <h5 class="text-lg font-semibold mb-4">Quick Links</h5>
+                <ul class="text-sm space-y-2">
+                    <li><a href="{% url 'home' %}" class="hover:text-cyan-500">Home</a></li>
+                    <li><a href="{% url 'notice' %}" class="hover:text-cyan-500">Notices</a></li>
+                    <li><a href="#" class="hover:text-cyan-500">Booking</a></li>
+                    <li><a href="#" class="hover:text-cyan-500">Contact</a></li>
+                    <li><a href="#" class="hover:text-cyan-500">About Us</a></li>
+                </ul>
+            </div>
+
+            <!-- Social Media -->
+            <div class="w-full md:w-1/3">
+                <h5 class="text-lg font-semibold mb-4">Follow Us</h5>
+                <div class="flex space-x-4">
+                    <a href="#" class="hover:text-cyan-500">
+                        <ion-icon name="logo-facebook" size="large"></ion-icon>
+                    </a>
+                    <a href="#" class="hover:text-cyan-500">
+                        <ion-icon name="logo-twitter" size="large"></ion-icon>
+                    </a>
+                    <a href="#" class="hover:text-cyan-500">
+                        <ion-icon name="logo-instagram" size="large"></ion-icon>
+                    </a>
+                    <a href="#" class="hover:text-cyan-500">
+                        <ion-icon name="logo-linkedin" size="large"></ion-icon>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-6 border-t border-slate-700 pt-4 text-center text-sm">
+            &copy; 2024 Jashore University of Science & Technology. All rights reserved.
+        </div>
+    </div>
+</footer>
+    <script>
+        function Menu(e) {
+            let list = document.querySelector('#Mymenu');
+            if (e.name === 'menu') {
+                e.name = "close";
+                list.classList.add('top-[143px]', 'opacity-100', 'menu-visible');
+            } else {
+                e.name = "menu";
+                list.classList.remove('top-[80px]', 'opacity-100', 'menu-visible');
+            }
+        }
+    </script>
+</body>
+
+</html>
