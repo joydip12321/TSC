@@ -1,4 +1,50 @@
-{% extends "image.html" %} {% block first %}
+{% extends "image.html" %} 
+{% block first %}
+<div class="container mx-auto mt-5">
+    <form class="col-span-13 card p-1"  method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+    <div class="border-yellow-500 mt-2 border 2">
+        {% for notice in notices %}
+        <div class="items-center mb-3 p-3 mt-3 border-b border-gray-300">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="mb-3 font-bold"><i class="fa-solid fa-calendar-days"></i> {{ notice.uploaded_at }}</p>
+                    <p class="mb-0 text-xl">{{ notice.title }}</p>
+                </div>
+                <a href="{{ notice.pdf.url }}" class="font-bold btn btn-warning bg-yellow-400 border-primary border-6 border-solid p-4" target="_blank">Download</a>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    </form>
+</div>
+<nav aria-label="Pagination" class="text-center mt-5 mb-5">
+    <ul class="pagination inline-flex mx-auto">
+        {% if notices.has_previous %}
+        <li class="page-item">
+            <a class="page-link bg-yellow-400 p-2 ml-2 px-4 py-2 rounded-md" href="/notice?page=1">First</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link bg-yellow-400 p-2 ml-2 px-4 py-2 rounded-md" href="/notice?page={{notices.previous_page_number}}">Previous</a>
+        </li>
+        {% endif %}
+        {% for n in notices.paginator.page_range %}
+        <li class="page-item">
+            <a class="page-link bg-yellow-400 p-2 ml-2 px-4 py-2 rounded-md" href="/notice?page={{ n }}">{{ n }}</a>
+        </li>
+        {% endfor %}
+        {% if notices.has_next %}
+        <li class="page-item">
+            <a class="page-link bg-yellow-400 p-2 ml-2 px-4 py-2 rounded-md" href="/notice?page={{notices.next_page_number}}">Next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link bg-yellow-400 p-2 ml-2 px-4 py-2 rounded-md" href="/notice?page={{ notices.paginator.num_pages }}">Last</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
 
 
-{%endblock%}
+
+{% endblock %}
