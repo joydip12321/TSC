@@ -12,7 +12,6 @@
         /* Custom styles to ensure the menu displays over the image */
         #Mymenu {
             z-index: 10; /* Higher z-index to ensure the menu is above the image */
-
         }
         .menu-visible {
             background-color: rgba(98, 135, 160, 0.8); /* Semi-transparent background */
@@ -44,10 +43,24 @@
                     <a href="https://just.edu.bd/" target="_blank" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">JUST WEBSITE</a>
                 </li>
                 <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0">
-                    <a href="#" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">User Login</a>
+                    {% if user.is_authenticated and not user.is_staff %}
+                    <a href="{% url 'logout' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">User Logout</a>
+
+                    {% elif not user.is_staff %}
+                    <a href="{% url 'login' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">User Login</a>
+                    {% endif %}
                 </li>
-                <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0">
-                    <a href="#" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Admin Login</a>
+                <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0 sm:place-content-center justify-between w-full md:w-auto md:space-x-4 mr-8">
+                    {% if user.is_authenticated and user.is_staff%}
+                    <a href="{% url 'AddRoom' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Add Room</a>
+                    <a href="{% url 'AddNotice' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Add Notice</a>
+
+                    <a href="{% url 'Booking_list' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Booking List</a>
+                    <a href="{% url 'AdminLogout' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Admin Logout</a>
+
+                    {% else %}
+                    <a href="{% url 'AdminLogin' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Admin Login</a>
+                    {% endif %}
                 </li>
             </ul>
         </nav>
@@ -87,7 +100,7 @@
                     <a href="{% url 'notice' %}" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">NOTICES</a>
                 </li>
                 <li class="mx-4 my-6 md:my-0">
-                    <a href="#" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">BOOKING</a>
+                    <a href="{% url 'room_list' %}" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">BOOKING</a>
                 </li>
 
                 <li class="mx-4 my-6 md:my-0">
@@ -128,7 +141,7 @@
                 <ul class="text-sm space-y-2">
                     <li><a href="{% url 'home' %}" class="hover:text-cyan-500">Home</a></li>
                     <li><a href="{% url 'notice' %}" class="hover:text-cyan-500">Notices</a></li>
-                    <li><a href="#" class="hover:text-cyan-500">Booking</a></li>
+                    <li><a href="{% url 'room_list' %}" class="hover:text-cyan-500">Booking</a></li>
                     <li><a href="#" class="hover:text-cyan-500">Contact</a></li>
                     <li><a href="#" class="hover:text-cyan-500">About Us</a></li>
                 </ul>

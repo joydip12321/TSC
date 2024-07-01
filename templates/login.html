@@ -1,0 +1,70 @@
+{% extends "image.html" %}
+
+{% block first %}
+<div class="flex items-center justify-center bg-lime-200 py-6 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full bg-gray-100 p-7 rounded-lg shadow-md">
+        <h2 class="text-center text-3xl leading-9 font-extrabold text-gray-900 mb-6">
+            Login to your account
+        </h2>
+        <form class="mt-8 space-y-6" method="post">
+            {% csrf_token %}
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input id="username" name="username" type="text" autocomplete="username" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
+                </div>
+                <div class="mt-4 relative">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="relative">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
+                        <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember_me" name="remember_me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                    <label for="remember_me" class="ml-2 block text-sm text-gray-900">
+                        Remember me
+                    </label>
+                </div>
+                <div class="text-sm">
+                    <a href="{% url 'password-reset' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                        Forgot your password?
+                    </a>
+                </div>
+            </div>
+            <div class="mt-6">
+                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Login
+                </button>
+            </div>
+        </form>
+        <p class="mt-6 text-center text-sm text-gray-600">
+            Don't have an account?
+            <a href="{% url 'register' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                Register
+            </a>
+        </p>
+    </div>
+</div>
+
+<!-- Add Font Awesome for the eye icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<!-- Add JavaScript to toggle password visibility -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.querySelectorAll('.toggle-password');
+        
+        togglePassword.forEach(function(toggle) {
+            toggle.addEventListener('click', function(e) {
+                const passwordField = document.querySelector(toggle.getAttribute('toggle'));
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                toggle.classList.toggle('fa-eye');
+                toggle.classList.toggle('fa-eye-slash');
+            });
+        });
+    });
+</script>
+{% endblock %}
