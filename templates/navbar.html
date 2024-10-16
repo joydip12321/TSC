@@ -34,41 +34,36 @@
     </style>
 </head>
 
-<body class="">
-    <div class="bg-gradient">
-        <nav class="p-1 sm:p-0 bg-slate-950 flex justify-between sm:justify-center md:justify-end items-center text-center">
-            <div class="flex justify-between items-center w-full md:w-auto"></div>
-            <ul class="flex sm:place-content-center justify-between w-full md:w-auto md:space-x-4 mr-8">
-                <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0">
-                    <a href="https://just.edu.bd/" target="_blank" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">JUST WEBSITE</a>
-                </li>
-                <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0">
-                    {% if user.is_authenticated and not user.is_staff %}
-                    <a href="{% url 'logout' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">User Logout</a>
-
-                    {% elif not user.is_staff %}
-                    <a href="{% url 'login' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">User Login</a>
-                    {% endif %}
-                </li>
-                <li class="mx-4 sm:mx-1 sm:my-0 my-6 md:my-0 sm:place-content-center justify-between w-full md:w-auto md:space-x-4 mr-8">
-                    {% if user.is_authenticated and user.is_staff%}
-                    <a href="{% url 'AddRoom' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Add Room</a>
-                    <a href="{% url 'AddNotice' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Add Notice</a>
-
-                    <a href="{% url 'Booking_list' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Booking List</a>
-                    <a href="{% url 'AdminLogout' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Admin Logout</a>
-
-                    {% else %}
-                    <a href="{% url 'AdminLogin' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Admin Login</a>
-                    {% endif %}
-                </li>
-            </ul>
-        </nav>
-    </div>
+<div class="bg-gradient w-full top-0 z-40 fixed">
+    <nav class="p-0 bg-slate-950 flex flex-wrap justify-center items-center text-center">
+        <ul class="flex sm:place-content-center justify-between w-full md:w-auto flex-nowrap">
+            <li class="mx-2 sm:mx-1 sm:my-0 my-3">
+                <a href="https://just.edu.bd/" target="_blank" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">JUST</a>
+            </li>
+            <li class="mx-2 sm:mx-1 sm:my-0 my-3">
+                {% if user.is_authenticated and not user.is_staff %}
+                <a href="{% url 'logout' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">UserLogout</a>
+                {% elif not user.is_staff %}
+                <a href="{% url 'login' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">UserLogin</a>
+                {% endif %}
+            </li>
+            <li class="mx-2 sm:mx-1 sm:my-0 my-3">
+                {% if user.is_authenticated and user.is_staff %}
+                <a href="{% url 'AddRoom' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Room</a>
+                <a href="{% url 'AddNotice' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Notice</a>
+                <a href="{% url 'Booking_list' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Booking</a>
+                <a href="{% url 'AdminLogout' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">AdminLogout</a>
+                {% else %}
+                <a href="{% url 'AdminLogin' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">AdminLogin</a>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+</div>
     
 
-    <div class="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%">
-        <nav class="p-4 shadow md:flex md:items-center md:justify-between">
+<div class="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 fixed w-full top-10 sm:top-6 z-50">
+    <nav class="p-0 shadow md:flex md:items-center md:justify-between">
             <div class="flex justify-between items-center ">
                 <span class="font-[Poppins] cursor-pointer">
                     <div class="inline flex">
@@ -93,21 +88,21 @@
             </div>
 
             <ul id="Mymenu"  class=" md:flex text-white font-mono font-bold md:items-center z-[-1] md:z-auto md:static absolute w-full left-0 md:w-auto md:py-0 py-4 md:pl-0 pl-7 md:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500">
-                <li class="mx-4 my-6 md:my-0 " >
+                <li class="mx-2 my-6 md:my-0 " >
                     <a href="{% url 'home' %}" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">HOME</a>
                 </li>
-                <li class="mx-4 my-6 md:my-0">
+                <li class="mx-2 my-6 md:my-0">
                     <a href="{% url 'notice' %}" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">NOTICES</a>
                 </li>
-                <li class="mx-4 my-6 md:my-0">
+                <li class="mx-2 my-6 md:my-0">
                     <a href="{% url 'room_list' %}" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">BOOKING</a>
                 </li>
 
-                <li class="mx-4 my-6 md:my-0">
+                <li class="mx-2 my-6 md:my-0">
                     <a href="#" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">CONTACT</a>
                 </li>
 
-                <li class="mx-4 my-6 md:my-0">
+                <li class="mx-2 my-6 md:my-0">
                     <a href="#" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">ABOUT US</a>
                 </li>
             </ul>
@@ -176,7 +171,7 @@
             let list = document.querySelector('#Mymenu');
             if (e.name === 'menu') {
                 e.name = "close";
-                list.classList.add('top-[143px]', 'opacity-100', 'menu-visible');
+                list.classList.add('top-[88px]', 'opacity-100', 'menu-visible');
             } else {
                 e.name = "menu";
                 list.classList.remove('top-[80px]', 'opacity-100', 'menu-visible');
