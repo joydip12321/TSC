@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.auth.models import User
+
 
 
 class UserProfile(models.Model):
@@ -9,10 +11,13 @@ class UserProfile(models.Model):
         ('teacher', 'Teacher'),
         ('guest', 'Guest'),
     ]
-    user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=USER_ROLES)
+    phone = models.CharField(max_length=15, null=True, blank=True)  # Add phone number field
+
     def __str__(self):
-        return self.role
+        return self.user.username
+    
 
 class Notice(models.Model):
     title = models.CharField(max_length=200)
@@ -40,8 +45,8 @@ class Room(models.Model):
    
 class Booking(models.Model):
     PAYMENT_CHOICES = [
-        ('CASH', 'Cash-on'),
-        ('ONLINE', 'Online'),
+        ('CASH', 'CASH'),
+        ('E-Payment', 'E-Payment'),
     ]
     booking_id = models.AutoField(primary_key=True)
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
@@ -50,8 +55,33 @@ class Booking(models.Model):
     check_in=models.DateField()
     check_out=models.DateField()
     tot_price=models.IntegerField(default=0)
-    payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES,default=0)
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='CASH')
     confirmed = models.BooleanField(default=False) 
     role=models.CharField(max_length=10,default="Student")
 
+class MenuItem(models.Model):
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    image = models.ImageField(upload_to='img/')
+    description=models.CharField(max_length=40)
 
+    def __str__(self):
+        return self.name
+
+class Orders(models.Model):
+    STATUS =(
+        ('Pending','Pending'),
+        ('Order Confirmed','Order Confirmed'),
+        ('Out for Delivery','Out for Delivery'),
+        ('Delivered','Delivered'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Change to ForeignKey
+    item=models.ForeignKey('MenuItem',on_delete=models.CASCADE,null=True)
+    email = models.CharField(max_length=50,null=True)
+    role = models.CharField(max_length=20,null=True)
+    location = models.CharField(max_length=500,null=True)
+    phone = models.CharField(max_length=20,null=True)
+    order_time= models.DateTimeField(auto_now_add=True,null=True)
+    status=models.CharField(max_length=50,null=True,choices=STATUS)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.PositiveIntegerField(default=0)

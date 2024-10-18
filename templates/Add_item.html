@@ -1,0 +1,40 @@
+{% extends "image.html" %}
+
+{% block first %}
+
+<div class="container mx-auto py-4">
+    <h1 class="text-3xl font-bold text-center mb-3">Add New Menu Item</h1>
+  
+    
+    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg p-4">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500" placeholder="Enter Item Name">
+            </div>
+
+            <div class="mb-4">
+                <input type="text" name="price" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500" placeholder="Enter Item Price">
+            </div>
+
+            <div class="mb-4">
+                <textarea name="description" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500" placeholder="Enter Item Description"></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label for="image" class="block text-gray-700">Item Image</label>
+                <input type="file" name="image" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div>
+                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Add Item
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

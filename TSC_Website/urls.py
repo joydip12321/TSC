@@ -57,4 +57,13 @@ urlpatterns = [
     path('reject_booking/<int:booking_id>/', views.reject_booking, name='reject_booking'),
     path('approve_booking/<int:booking_id>/', views.approve_booking, name='approve_booking'),
 
+    path('dinning/', views.Dinning, name='dinning'),
+    path('add_to_cart/<int:pk>/',views.AddCart,name="add_to_cart"),
+    path('view_cart/', views.ViewCart, name='view_cart'),
+    path('addItem/',views.AddItem,name="addItem"),
+    path('item/',views.Item,name="item"),
+
+
+
+
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

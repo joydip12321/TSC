@@ -11,11 +11,13 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 from django.utils.dateparse import parse_date
 from django.core.mail import send_mail
-import re
+import re,json
 from django.contrib.auth.views import LoginView,LogoutView
 from .forms import *
 from datetime import datetime
 from functools import wraps
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 def custom_login_required(function=None, redirect_field_name='next', login_url=None):
@@ -23,7 +25,7 @@ def custom_login_required(function=None, redirect_field_name='next', login_url=N
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
             messages.info(request, "You need to log in first to access this page.")
-            return redirect('room_list')
+            return redirect('login')
         return function(request, *args, **kwargs)
     return _wrapped_view
 
@@ -305,3 +307,100 @@ def approve_booking(request, booking_id):
 
         booking.save()        
         return redirect('/Booking_list/')
+
+@user_passes_test(is_admin, login_url='/')
+def AddItem(request):
+    itemForm=ItemForm()
+    if request.method=='POST':
+        itemForm=ItemForm(request.POST, request.FILES)
+        if itemForm.is_valid():
+            itemForm.save()
+
+            messages.success(request, f'Item added successfully.')
+
+        return redirect('/addItem/')
+    return render(request,'Add_item.html',{'itemForm':ItemForm})
+
+def Item(request):
+    item=MenuItem.objects.all()
+    return render(request,'item.html',{'item':item})
+
+@custom_login_required
+def Dinning(request):
+    return render(request,"dinning.html")
+
+@custom_login_required
+def AddCart(request, pk):
+    item = get_object_or_404(MenuItem, pk=pk)
+    
+    # Check if the cart exists in the session
+    cart = request.session.get('cart', {})
+    
+    # Add item to cart
+    if str(pk) in cart:
+        messages.info(request, f'Item already added to cart')
+
+    else:
+        cart[str(pk)] = {
+            'name': item.name,
+            'price': str(item.price),
+            'quantity': 1,
+            'image': item.image.url,
+        }
+        messages.success(request, f'Item added to cart successfully.')
+
+    
+    # Save the updated cart back to the session
+    request.session['cart'] = cart
+    return redirect('/item/')
+
+@custom_login_required
+def ViewCart(request):
+    cart = request.session.get('cart', {})
+    
+    # Prepare a list of cart items for rendering
+    cart_items = []
+    user=request.user
+    user_profile = UserProfile.objects.get(user=user)
+
+    total_price = 0
+    # user=request.user
+    for item_id, item_details in cart.items():
+        cart_items.append(item_details)
+
+    if request.method == 'POST':
+            cart = request.session.get('cart', {})
+            location = request.POST.get('location')
+
+            
+
+            # Loop through cart items to create order records
+            for item_id, item_details in cart.items():
+                product = MenuItem.objects.get(id=item_id)
+                quantity=int(request.POST.get(f'quantity_',0)) # Use item_id directly
+                # Calculate total price for each item
+                item_total_price = product.price * quantity
+                print(item_total_price)
+                # Create Order instance
+                order_item=Orders(
+                    user=user,
+                    item=product,
+                    email=user.email,
+                    location=location,
+                    phone=user_profile.phone,
+                    role=user_profile.role,
+                    quantity=quantity,
+                    price=item_total_price,
+                    status='Pending',
+
+                )
+                order_item.save()  # Save each order item
+                messages.success(request, f'Order Request send successfully,wait for confirmation')
+
+
+            # Optionally, you can also save the total price in a separate Order model if needed
+
+            # Clear the cart after order is placed
+            request.session['cart'] = {}
+
+    return render(request, 'cart.html', {'cart_items': cart_items})

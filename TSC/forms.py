@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile,MenuItem
 import re
 
 class UserRegistrationForm(forms.ModelForm):
@@ -52,4 +52,9 @@ class UserRegistrationForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['role']
+        fields = ['role','phone']
+
+class ItemForm(forms.ModelForm):
+    class Meta:
+        model=MenuItem
+        fields=['name','price','description','image']

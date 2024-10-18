@@ -1,0 +1,48 @@
+{% extends "image.html" %}
+{% block first %}
+
+<section class="food_section layout_padding-bottom py-10">
+    <div class="container mx-auto px-4">
+        <div class="heading_container heading_center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 text-center">
+                Our Menu
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {% for item in item %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all hover:scale-105">
+                <div class="img-box">
+                    <img class="w-full h-48 object-cover" src="{{ item.image.url }}" alt="{{ item.name }}">
+                </div>
+                <div class="p-6">
+                    <h5 class="text-xl font-semibold text-gray-800 mb-2">
+                        {{ item.name }}
+                    </h5>
+                    <p class="text-gray-600 mb-4">
+                        {{ item.description }}
+                    </p>
+                    <p class="text-lg font-bold text-gray-900">
+                        ${{ item.price }}
+                    </p>
+                    <form method="POST" action="{% url 'add_to_cart' item.pk %}" class="mt-4">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="{% url 'view_cart' %}" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                View Cart
+            </a>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "image.html" %}
+{% block first %}
+
+<div class="container mx-auto mt-10 p-2 bg-white rounded-lg shadow-lg">
+  <div class="mb-8">
+      <h2 class="text-2xl font-bold text-center text-green-600">My Cart</h2>
+  </div>
+  <form method="POST">
+      {% csrf_token %}
+      <table class="min-w-full divide-y divide-gray-300">
+          <thead class="bg-gray-300">
+              <tr>
+                  <th class="px-4 py-2">Name</th>
+                  <th class="px-4 py-2">Price</th>
+                  <th class="px-4 py-2">Quantity</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for p in cart_items %}
+                  {% if p %}
+                      <tr>
+                          <td class="border px-4 py-2 text-center">{{ p.name }}</td>
+                          <td class="border px-4 py-2 text-center">$ {{ p.price }}</td>
+                          <td class="border px-4 py-2 flex justify-center"> <!-- Added flex and justify-center -->
+                              <input class="border text-center rounded p-1 w-20" type="number" name="quantity_{{ p.id }}" id="quantity_{{ p.id }}" data-product-id="{{ p.id }}" data-price="{{ p.price }}" value="0" min="0">
+                          </td>
+                      </tr>
+                  {% else %}
+                      <tr>
+                          <td colspan="6" class="text-center py-4"><h1>No products</h1></td>
+                      </tr>
+                  {% endif %}
+              {% endfor %}
+          </tbody>
+      </table>
+      
+      <!-- New Input Fields for Order Details -->
+      <div class="flex items-start mt-8 mb-6">
+          <div class="w-full max-w-md"> <!-- Left box for order details -->
+              <label for="orderDetails" class="block text-sm font-medium text-gray-700">Order location:</label>
+              <textarea id="orderDetails" name="orderDetails" rows="3" placeholder="Enter details (room number, address)" class="border rounded w-full p-2 mt-1 mb-4" required></textarea>
+          </div>
+          
+          <div class="flex flex-col justify-center ml-6 mt-6"> <!-- Right side for buttons -->
+              <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-lg mb-2" id="total">Total ${{ total }}</button>
+              <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-800">Purchase</button>
+          </div>
+      </div>
+  </form>
+</div>
+
+
+<script>
+  function updateTotal() {
+    let total = 0;
+    const quantityInputs = document.querySelectorAll('input[type="number"]');
+
+    quantityInputs.forEach(input => {
+      const price = parseFloat(input.dataset.price);
+      const quantity = parseInt(input.value);
+
+      if (!isNaN(quantity) && quantity > 0) {
+        total += price * quantity;
+      }
+    });
+
+    document.getElementById('total').innerText = 'Total $' + total.toFixed(2);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      var quantityInputs = document.querySelectorAll('input[name^="quantity_"]');
+      
+      quantityInputs.forEach(function(input) {
+        input.addEventListener('change', function() {
+          updateTotal();
+        });
+      });
+    });
+
+</script>
+
+{% endblock %}
