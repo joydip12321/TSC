@@ -1,0 +1,95 @@
+{% extends "image.html" %}
+
+{% block first %}
+<style>
+    .availability_form {
+        z-index: 2;
+        position: relative;
+    }
+</style>
+<div class="container mx-auto availability_form">
+    <div class="flex justify-center">
+        <div class="w-full lg:w-3/4 mb-8 p-6 rounded shadow-lg bg-aquamarine">
+            <h2 class="mt-3 pt-5 mb-5 text-center font-bold text-4xl text-[#335e8d] drop-shadow-md">Book {{ room }} Room</h2>
+            <form method="post" class="col-lg-12 mb-4 p-8 rounded shadow-lg bg-blue-200 items-center justify-center">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                    <div class="mb-4">
+                        <label for="check_date" class="block text-gray-700">Date</label>
+                        <input type="date" class="w-full border rounded px-3 py-2 shadow-none" name="check_date" id="check_date" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="start_time" class="block text-gray-700">Start Hour</label>
+                        <select name="start_time" id="start_time" class="w-full border rounded px-3 py-2 shadow-none"required onchange="updateEndTime()" onchange="updateTotalPrice()">
+                            <option value="">Select Hour</option>
+                            {% for hour in hours %}
+                                <option value="{{ hour }}">{{ hour }}:00</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="end_time" class="block text-gray-700">End Hour</label>
+                        <select name="end_time" id="end_time" class="w-full border rounded px-3 py-2 shadow-none" required>
+                            <option value="">Select Hour</option>
+                           
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="total_price" class="block text-gray-700">Total Price</label>
+                        <input name="total_price" id="totalPrice" required type="text" class="w-full border rounded px-3 py-2" readonly />
+                    </div>
+                </div>
+                <div class="flex justify-center mt-5">
+                    <button type="submit" class="bg-blue-600 hover:bg-violet-500 text-white px-4 py-2 rounded shadow-md">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function updateEndTime() {
+        const startTimeSelect = document.getElementById('start_time');
+        const endTimeSelect = document.getElementById('end_time');
+        const selectedStartTime = parseInt(startTimeSelect.value);
+        
+        // Clear existing options
+        endTimeSelect.innerHTML = '<option value="">Select Hour</option>';
+        
+        // Add options for end time
+        for (let hour = selectedStartTime + 1; hour <= 24; hour++) {  // Assuming max hour is 20
+            endTimeSelect.innerHTML += `<option value="${hour}">${hour}:00</option>`;
+        }
+    }
+    // Get references to the check-in date and time input fields
+    var checkDateInput = document.getElementById('check_date');
+    var startTimeSelect = document.getElementById('start_time');
+    var endTimeSelect = document.getElementById('end_time');
+
+    // Add event listeners to listen for changes in the check date and times
+    checkDateInput.addEventListener('change', updateTotalPrice);
+    startTimeSelect.addEventListener('change', updateTotalPrice);
+    endTimeSelect.addEventListener('change', updateTotalPrice);
+
+    // Function to calculate and update the total price
+    function updateTotalPrice() {
+        var checkDate = new Date(checkDateInput.value);
+        var startHour = parseInt(startTimeSelect.value);
+        var endHour = parseInt(endTimeSelect.value);
+
+        // Calculate the number of hours between start and end times
+        var numberOfHours = endHour - startHour;
+
+        // Retrieve the room price from the backend (you may need to pass it in the context)
+        var roomPrice = {{ room_price }}; // Assuming room price is passed in the context
+
+        // Calculate the total price
+        var totalPrice = numberOfHours * roomPrice;
+        if (!isNaN(totalPrice) && numberOfHours > 0) {
+            // Display the total price in the HTML element
+            document.getElementById('totalPrice').value = totalPrice.toFixed(2);
+        } else {
+            document.getElementById('totalPrice').value = '';
+        }
+    }
+</script>
+{% endblock %}

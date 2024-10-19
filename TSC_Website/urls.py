@@ -44,13 +44,23 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'),name='password_reset_confirm'),
     path('password-reset-complete/',PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),name='password_reset_complete'),
 
+    path('all_room',views.AllRoom,name="all_room"),
+    path('room_list',views.GuestRoom,name="room_list"),
+    path('event_room',views.EventRoom,name="event_room"),
+    path('club_room',views.ClubRoom,name="club_room"),
+    path('club_room/<str:room_name>/', views.ClubBooking, name='club_room'),
 
-    path('room_list',views.Room_list,name="room_list"),
+    path('office_room',views.OfficeRoom,name="office_room"),
+    path('other_room',views.OtherRoom,name="other_room"),
+
     
     path('Booking/<int:room_no>/',views.Bookin,name="Booking"),
+    path('event_booking/<int:room_no>/',views.EventBooking,name="event_booking"),
+
     
     path('AddNotice/',views.AddNotice,name="AddNotice"),
     path('AddRoom/',views.AddRoom,name="AddRoom"),
+    
 
 
     path('Booking_list/',views.Booking_list,name="Booking_list"),

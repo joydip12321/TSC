@@ -10,6 +10,7 @@ class UserProfile(models.Model):
         ('student', 'Student'),
         ('teacher', 'Teacher'),
         ('guest', 'Guest'),
+        ('club member','club member'),
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=USER_ROLES)
@@ -33,9 +34,16 @@ class Room_Type(models.Model):
         return self.roomtype
     
 class Room(models.Model):
+    current_status=[
+        ('Available for booking','Available for booking'),
+        ('Not available currently','Not available currently'),
+        ('Not for Booking','Not for booking'),
+        
+    ]
     room=models.CharField(max_length=50)
     roomtype = models.ForeignKey(Room_Type, on_delete=models.SET_NULL,null=True,blank=True)
     capacity=models.IntegerField(default=0)
+    status = models.CharField(null=True,blank=True,max_length=50, choices=current_status)
     description=models.TextField(null=True,blank=True)
     img=models.FileField(upload_to='img')
     price=models.IntegerField(default=0)
@@ -52,12 +60,14 @@ class Booking(models.Model):
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     email = models.EmailField() 
     room = models.ForeignKey(Room, on_delete=models.SET_NULL,null=True,blank=True)
-    check_in=models.DateField()
-    check_out=models.DateField()
+    check_in=models.DateTimeField()
+    check_out=models.DateTimeField()
     tot_price=models.IntegerField(default=0)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='CASH')
     confirmed = models.BooleanField(default=False) 
     role=models.CharField(max_length=10,default="Student")
+    def __str__(self):
+        return self.room.room
 
 class MenuItem(models.Model):
     name = models.CharField(max_length=200)
@@ -85,3 +95,5 @@ class Orders(models.Model):
     status=models.CharField(max_length=50,null=True,choices=STATUS)
     quantity = models.PositiveIntegerField(default=1)
     price = models.PositiveIntegerField(default=0)
+    def __str__(self):
+        return f"{self.item} ordered by {self.user.username}"
