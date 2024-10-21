@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import UserProfile,MenuItem
+from .models import *
 import re
 
 class UserRegistrationForm(forms.ModelForm):
@@ -52,9 +52,55 @@ class UserRegistrationForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['role','phone']
+        fields = [
+            'role', 'phone',
+            'reference_name', 'ref_contact', 'ref_role', 'ref_dept_name', 'national_id',
+            'student_id', 'student_dept_name', 'student_session',
+            'teacher_id', 'teacher_dept_name'
+        ]
+    def clean(self):
+        cleaned_data = super().clean()
+        role = cleaned_data.get('role')
+
+        if role == 'guest':
+            # Ensure these fields are filled in for guests
+            reference_name = cleaned_data.get('reference_name')
+            ref_contact = cleaned_data.get('ref_contact')
+            ref_role = cleaned_data.get('ref_role')
+            ref_dept_name = cleaned_data.get('ref_dept_name')
+            national_id = cleaned_data.get('national_id')
+
+            if not reference_name or not ref_contact or not ref_role or not ref_dept_name or not national_id:
+                raise forms.ValidationError("All reference fields are required for guests.")
+
+        elif role == 'student':
+            # Ensure these fields are filled in for students
+            student_id = cleaned_data.get('student_id')
+            student_dept_name = cleaned_data.get('student_dept_name')
+            student_session = cleaned_data.get('student_session')
+
+            if not student_id or not student_dept_name or not student_session:
+                raise forms.ValidationError("All student fields are required for students.")
+
+        elif role == 'teacher':
+            # Ensure these fields are filled in for teachers
+            teacher_id = cleaned_data.get('teacher_id')
+            teacher_dept_name = cleaned_data.get('teacher_dept_name')
+
+            if not teacher_id or not teacher_dept_name:
+                raise forms.ValidationError("All teacher fields are required for teachers.")
 
 class ItemForm(forms.ModelForm):
     class Meta:
         model=MenuItem
         fields=['name','price','description','image']
+
+class RoomForm(forms.ModelForm):
+    class Meta:
+        model=Room
+        fields=['room','roomtype','capacity','status','description','img','price',]
+
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model=Booking
+        fields=['booking_id','user','email','room','check_in','check_out','tot_price','payment_method','confirmed','role',]

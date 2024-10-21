@@ -15,6 +15,21 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=USER_ROLES)
     phone = models.CharField(max_length=15, null=True, blank=True)  # Add phone number field
+    # Fields for guest role
+    national_id = models.CharField(max_length=20, null=True, blank=True)  # Reference National ID
+    reference_name = models.CharField(max_length=100, null=True, blank=True)  # Reference Name
+    ref_contact = models.CharField(max_length=15, null=True, blank=True)  # Reference Contact
+    ref_role = models.CharField(max_length=50, null=True, blank=True)  # Reference Role
+    ref_dept_name = models.CharField(max_length=100, null=True, blank=True)  # Reference Department Name
+
+    # Fields for student role
+    student_id = models.CharField(max_length=20, null=True, blank=True)  # Student ID
+    student_dept_name = models.CharField(max_length=100, null=True, blank=True)  # Student Department Name
+    student_session = models.CharField(max_length=20, null=True, blank=True)  # Student Session
+
+    # Fields for teacher role
+    teacher_id = models.CharField(max_length=20, null=True, blank=True)  # Teacher ID
+    teacher_dept_name = models.CharField(max_length=100, null=True, blank=True) 
 
     def __str__(self):
         return self.user.username

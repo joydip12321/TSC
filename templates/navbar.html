@@ -142,9 +142,20 @@
                         </li>
                     </ul>
                 </li>
-                
-                
+                <li class="relative group mx-2 my-6 md:my-0">
+                        <!-- Cart Icon with SVG -->
+                            <a href="{% url 'view_cart' %}" class="text-xl hover:sm:text-cyan-500 hover:text-white duration-500 flex items-center">
 
+                            <i class="fa-solid fa-cart-shopping"></i>
+                    
+                            <!-- Badge with Cart Item Count -->
+                            <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none bg-gray-300 rounded-full">
+                                {{ request.session.cart|length }}
+                            </span>
+                            
+                            
+                        </a>
+                    </li>
                 <li class="mx-2 my-6 md:my-0">
                     <a href="#" class="text-xl hover:sm:text-cyan-500 hover:text-pink-50 duration-500">AboutUS</a>
                 </li>

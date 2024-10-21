@@ -55,7 +55,7 @@ def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         profile_form = UserProfileForm(request.POST)
-        
+
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
             profile = profile_form.save(commit=False)
@@ -64,13 +64,19 @@ def register(request):
             messages.success(request, "Registration successful")
             return redirect('login')  # Redirect to a success page
         else:
+            
             for error in user_form.errors.values():
                 messages.error(request, error.as_text())
+            for error in profile_form.errors.values():
+                messages.error(request, error.as_text())
+
     else:
         user_form = UserRegistrationForm()
         profile_form = UserProfileForm()
-    
+
+    # Render the form with existing data, so it won't clear the fields
     return render(request, 'register.html', {'user_form': user_form, 'profile_form': profile_form})
+
 
 def LogIn(request):
     if request.method=="POST":
@@ -128,34 +134,35 @@ def Notices(request):
 
 @user_passes_test(is_admin, login_url='/')
 def AddRoom(request):
-    roomt=Room_Type.objects.all()
-    if(request.method=="POST"):
-        room=request.POST.get('room')
-        roomtype_id=request.POST.get('roomtype')
-        description=request.POST.get('description')
-        img=request.FILES.get('img')
-        status=request.POST.get('status')
-        price=request.POST.get('price')
-        roomtype= Room_Type.objects.get(pk=roomtype_id)  # Assuming the select field is named 'category'
+    roomt = Room_Type.objects.all()  # Get all room types
 
-        existing_room = Room.objects.filter(room=room).first()
-        if existing_room:
-            messages.success(request, "Room already exists")
+    if request.method == "POST":
+        form = RoomForm(request.POST, request.FILES)  # Pass both POST data and files
+
+        if form.is_valid():
+            room = form.cleaned_data['room']
+            # Check if the room already exists
+            if Room.objects.filter(room=room).exists():
+                messages.error(request, "Room already exists")
+            else:
+                # Save the new room
+                form.save()
+                messages.success(request, f'Room {room} added successfully.')
+                return redirect('AddRoom')  # Redirect to the same page or another page
+
         else:
-            Room.objects.create(
-            room=room ,
-            roomtype=roomtype,
-            description=description,
-            status=status,
-            img=img,
-            price=price,
-            ) 
-            messages.success(request, f'Room {room} added successfully.')
-        return redirect('AddRoom')
-    context={
-        'roomt':roomt ,
-             }
-    return render(request,"AddRoom.html",context)
+            # If the form is not valid, display error messages
+            for error in form.errors.values():
+                messages.error(request, error)
+
+    else:
+        form = RoomForm()  # Create a new form instance
+
+    context = {
+        'roomt': roomt,
+        'form': form,  # Pass the form to the context
+    }
+    return render(request, "AddRoom.html", context)
 
 def AllRoom(request):
         room=Room.objects.all().order_by('-id')
@@ -387,7 +394,7 @@ def ClubBooking(request, room_name):
     return redirect('club_room')
 
 def OfficeRoom(request):
-    available_room = Room.objects.filter(roomtype__roomtype="ClubSocieties").order_by('-id')
+    available_room = Room.objects.filter(roomtype__roomtype="OfficeRoom").order_by('-id')
     room_type = Room_Type.objects.all()
     
     
@@ -509,6 +516,7 @@ def reject_booking(request, booking_id):
 @user_passes_test(is_admin, login_url='/')
 def approve_booking(request, booking_id):
         booking = Booking.objects.get(pk=booking_id)
+
         user_email = booking.email
         subject = 'Booking Approval Notification'
         message = (
@@ -568,6 +576,7 @@ def AddCart(request, pk):
     
     # Save the updated cart back to the session
     request.session['cart'] = cart
+    
     return redirect('/item/')
 
 @custom_login_required
