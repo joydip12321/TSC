@@ -31,6 +31,14 @@
         .flex-content {
             flex: 1;
         }
+        @media (min-width: 768px) {
+            #Mymenu {
+                position: static;
+                opacity: 1 !important;
+                background: none;
+                z-index: auto;
+            }
+        }
     </style>
 </head>
 
@@ -97,58 +105,61 @@
                     </a>
                 
                     <!-- Dropdown -->
-                    <ul class="absolute hidden group-hover:block bg-yellow-600 shadow-lg py-2 w-auto text-white z-50 rounded-md">
+                    <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md">
                         <!-- Dropdown Item 1 -->
-                        <li class="px-4 py-2 hover:bg-green-600">
+                        <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'room_list' %}" class="block">GuestRoom</a>
                         </li>
                         <!-- Dropdown Item 2 -->
-                        <li class="px-4 py-2 hover:bg-green-600">
+                        <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'event_room' %}" class="block">EventSpaces</a>
                         </li>
-                        <li class="px-4 py-2 hover:bg-green-600">
+                        <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'club_room' %}" class="block">ClubSociety</a>
                         </li>
-                        <li class="px-4 py-2 hover:bg-green-600">
+                        <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'office_room' %}" class="block">OfficeRoom</a>
                         </li>
-                        <li class="px-4 py-2 hover:bg-green-600">
+                        <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'other_room' %}" class="block">Others</a>
                         </li>
                     </ul>
                 </li>
                 <li class="relative group mx-2 my-6 md:my-0">
-                    <a href="{% url 'dinning' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
+                    <a href="{% url 'dinning' %}" class="text-xl hover:sm:text-black hover:text-white duration-500 flex items-center">
                         DINING
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </a>
                 
                     <!-- Dropdown -->
-                    <ul class="absolute hidden group-hover:block bg-yellow-600 shadow-lg py-2 w-auto text-white z-50 rounded-md">
+                    <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md">
                         <!-- Dropdown Item 1 -->
-                        <li class="px-4 py-2 hover:bg-green-600">
+                        <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'item' %}" class="block">OurMenu</a>
                         </li>
                         <!-- Dropdown Item 2 -->
-                        <li class="px-4 py-2 hover:bg-green-600">
+                        <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'view_cart' %}" class="block">MyCart</a>
                         </li>
                     </ul>
                 </li>
                 <li class="relative group mx-2 my-6 md:my-0">
-                        <!-- Cart Icon with SVG -->
-                            <a href="{% url 'view_cart' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
-
-                            <i class="fa-solid fa-cart-shopping"></i>
-                    
-                            <!-- Badge with Cart Item Count -->
-                            <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none bg-gray-300 rounded-full">
-                                {{ request.session.cart|length }}
-                            </span>
-                            
-                            
-                        </a>
-                    </li>
+                    <!-- Cart Icon with SVG -->
+                    <a href="{% url 'view_cart' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        
+                        <!-- Cart Item Count in Brackets -->
+                        {% if request.session.cart|length != 0 %}
+                        <span id="cart-count" class="text-xs font-bold text-black">
+                            ({{ request.session.cart|length }})
+                        </span>
+                        {% endif %}
+                    </a>
+                </li>
+                
+                
+                
+                
                 <li class="mx-2 my-6 md:my-0">
                     <a href="#" class="text-xl hover:sm:text-white hover:text-pink-50 duration-500">AboutUS</a>
                 </li>
