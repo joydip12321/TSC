@@ -45,7 +45,7 @@ urlpatterns = [
     path('password-reset-complete/',PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),name='password_reset_complete'),
 
     path('all_room',views.AllRoom,name="all_room"),
-    path('room_list',views.GuestRoom,name="room_list"),
+    path('room_list/',views.GuestRoom,name="room_list"),
     path('event_room',views.EventRoom,name="event_room"),
     path('club_room',views.ClubRoom,name="club_room"),
     path('club_room/<str:room_name>/', views.ClubBooking, name='club_room'),
