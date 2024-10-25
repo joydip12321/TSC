@@ -79,7 +79,7 @@ class Booking(models.Model):
     check_out=models.DateTimeField()
     tot_price=models.IntegerField(default=0)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='CASH')
-    confirmed = models.BooleanField(default=False) 
+    confirmed = models.IntegerField(default=0) 
     role=models.CharField(max_length=10,default="Student")
     def __str__(self):
         return self.room.room

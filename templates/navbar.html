@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+
     <style>
         /* Custom styles to ensure the menu displays over the image */
         #Mymenu {
@@ -42,37 +45,9 @@
     </style>
 </head>
 
-<div class="bg-gradient w-full top-0 z-40 fixed">
-    <nav class="p-0 bg-slate-950 flex flex-wrap justify-center items-center text-center">
-        <ul class="flex sm:place-content-center justify-between w-full md:w-auto flex-nowrap">
-            <li class="mx-2 sm:mx-1 sm:my-0 my-3">
-                <a href="https://just.edu.bd/" target="_blank" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">JUST</a>
-            </li>
-            <li class="mx-2 sm:mx-1 sm:my-0 my-3">
-                {% if user.is_authenticated and not user.is_staff %}
-                <a href="{% url 'logout' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">UserLogout</a>
-                {% elif not user.is_staff %}
-                <a href="{% url 'login' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">UserLogin</a>
-                {% endif %}
-            </li>
-            <li class="mx-2 sm:mx-1 sm:my-0 my-3">
-                {% if user.is_authenticated and user.is_staff %}
-                <a href="{% url 'AddRoom' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Room</a>
-                <a href="{% url 'AddNotice' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Notice</a>
-                <a href="{% url 'Booking_list' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Booking</a>
-                <a href="{% url 'addItem' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">Item</a>
-
-                <a href="{% url 'AdminLogout' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">AdminLogout</a>
-                {% else %}
-                <a href="{% url 'AdminLogin' %}" class="text-sm text-white hover:sm:text-cyan-500 hover:text-pink-50 duration-500">AdminLogin</a>
-                {% endif %}
-            </li>
-        </ul>
-    </nav>
-</div>
     
 
-<div class="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 fixed  w-full top-10 sm:top-6 z-50">
+<div class="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 fixed  w-full top-0 sm:top-0 z-50">
     <nav class="p-2 shadow md:flex md:items-center md:justify-between">
         <div class="flex justify-between items-center">
             <div class="inline-flex items-center cursor-pointer">
@@ -91,10 +66,31 @@
         
 
             <ul id="Mymenu"  class=" md:flex text-black font-mono font-bold md:items-center z-[-1] md:z-auto md:static absolute w-full left-0 md:w-auto md:py-0 py-4 md:pl-0 pl-7 md:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500">
+                {% if user.is_authenticated and user.is_staff %}
+                <li class="mx-2 my-6 md:my-0 " >
+                    <a href="{% url 'AddNotice' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">AddNotice</a>
+                </li>
+                <li class="mx-2 my-6 md:my-0 " >
+
+                <a href="{% url 'adminRoom' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Room</a>
+                </li>
+                <li class="mx-2 my-6 md:my-0 " >
+                    <a href="{% url 'Booking_list' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Booking</a>
+                    </li>
+                    <li class="mx-2 my-6 md:my-0 " >
+                        <a href="{% url 'addItem' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">AddItem</a>
+                    </li>
+                    <li class="mx-2 my-6 md:my-0 " >
+                        <a href="{% url 'AdminLogout' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">AdminLogout</a>
+                    </li>
+                    
+                        
+                {% else %}
                 <li class="mx-2 my-6 md:my-0 " >
                     <a href="{% url 'home' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">HOME</a>
                 </li>
                 <li class="mx-2 my-6 md:my-0">
+                    
                     <a href="{% url 'notice' %}" class="text-xl hover:sm:text-white hover:text-pink-50 duration-500">NOTICES</a>
                 </li>
               
@@ -123,10 +119,11 @@
                         <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'other_room' %}" class="block">Others</a>
                         </li>
+
                     </ul>
                 </li>
                 <li class="relative group mx-2 my-6 md:my-0">
-                    <a href="{% url 'dinning' %}" class="text-xl hover:sm:text-black hover:text-white duration-500 flex items-center">
+                    <a href="{% url 'dinning' %}" class="text-xl hover:text-white duration-500 flex items-center">
                         DINING
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </a>
@@ -163,6 +160,42 @@
                 <li class="mx-2 my-6 md:my-0">
                     <a href="#" class="text-xl hover:sm:text-white hover:text-pink-50 duration-500">AboutUS</a>
                 </li>
+               
+
+                <li class="relative group mx-2 my-6 md:my-0">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="text-xl hover:text-white duration-500 flex items-center">
+                        LogOut
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="text-xl hover:text-white duration-500 flex items-center">
+                        LogIn
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </a>
+                    {% endif %}
+                    
+                    <!-- Dropdown -->
+                    <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md" style="left: -10px;"> <!-- Adjusted left position -->
+                        <!-- Dropdown Item 1 -->
+                        {% if not user.is_authenticated %}
+
+                        <li class="px-1 py-2 hover:bg-blue-700">
+                            <a href="{% url 'register' %}" class="block">Register</a>
+                        </li>
+                        {%endif%}
+                        <li class="px-1 py-2 hover:bg-blue-700">
+                            <a href="{% url 'AdminLogin' %}" class="block">AdminLogin</a>
+                        </li>
+                        <!-- Dropdown Item 2 -->
+                    </ul>
+                </li>
+                
+                {% endif %}
             </ul>
         </nav>
     </div>
@@ -229,7 +262,7 @@
             let list = document.querySelector('#Mymenu');
             if (e.name === 'menu') {
                 e.name = "close";
-                list.classList.add('top-[88px]', 'opacity-100', 'menu-visible');
+                list.classList.add('top-[70px]', 'opacity-100', 'menu-visible');
             } else {
                 e.name = "menu";
                 list.classList.remove('top-[80px]', 'opacity-100', 'menu-visible');

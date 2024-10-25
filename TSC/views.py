@@ -164,17 +164,69 @@ def AddRoom(request):
     }
     return render(request, "AddRoom.html", context)
 
+
+def AdminRoom(request):
+    # Create a RoomForm instance for potential use in the template
+    room_form = RoomForm()
+    rooms = Room.objects.all().order_by('-id')  # Default to all rooms
+
+    # Check if the request is a POST request to filter the rooms
+    if request.method == "POST":
+        roomtype = request.POST.get('roomtype')
+        status = request.POST.get('status')
+
+        # Filter the queryset based on the provided criteria
+        if roomtype:
+            rooms = rooms.filter(roomtype=roomtype)
+        if status:
+            rooms = rooms.filter(status=status)
+
+    return render(request, "adminRoom.html", {'rooms': rooms, 'room_form': room_form})
+
+
+def UpdateRoom(request, room_id):
+    room = get_object_or_404(Room, id=room_id)  # Fetch the room based on room_id
+    if request.method == "POST":
+        form = RoomForm(request.POST, request.FILES, instance=room)  # Pass the room instance
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Room {room.room} updated successfully.')
+            return redirect('adminRoom')  # Redirect to room management page
+    else:
+        form = RoomForm(instance=room)  # Create a form with the room's current data
+
+    context = {
+        'form': form,
+        'room': room,
+    }
+    return render(request, "update_room.html", context)  # Create a template for updating
+
+def DeleteRoom(request, room_id):
+    room = get_object_or_404(Room, id=room_id)  # Fetch the room based on room_id
+    room.delete()  # Delete the room
+    messages.success(request, f'Room {room.room} deleted successfully.')
+    return redirect('adminRoom')  # Redirect to room managemen
+
+
 def AllRoom(request):
-        room=Room.objects.all().order_by('-id')
-        paginator = Paginator(room, 6)
-        page_no = request.GET.get('page')
-        try:
-            room = paginator.page(page_no)
-        except PageNotAnInteger:
-            room = paginator.page(1)
-        except EmptyPage:
-            room = paginator.page(paginator.num_pages)
-        return render(request, "AllRoom.html",{'room':room})
+    floor = request.GET.get('floor')  # Get the floor from the GET request
+    if floor is not None:  # If a floor was selected
+        # Filter rooms based on the selected floor
+        room = Room.objects.filter(room__gte=100 * (int(floor)+1), room__lt=100 * (int(floor)+2)).order_by('-id')
+    else:
+        # If no floor is selected, show all rooms
+        room = Room.objects.all().order_by('-id')
+
+    paginator = Paginator(room, 6)  # Paginate the results, 6 rooms per page
+    page_no = request.GET.get('page')  # Get the current page number
+    try:
+        room = paginator.page(page_no)
+    except PageNotAnInteger:
+        room = paginator.page(1)  # Show the first page if page number is not an integer
+    except EmptyPage:
+        room = paginator.page(paginator.num_pages)  # Show last page if page number is out of range
+
+    return render(request, "AllRoom.html", {'room': room, 'selected_floor': floor})  # Pass the selected floor to the context
 
 def GuestRoom(request):
     available_room = Room.objects.filter(roomtype__roomtype="GuestRooms").order_by('-id')  # or any other field
@@ -198,6 +250,7 @@ def GuestRoom(request):
                 messages.error(request, 'Check-in and check-out dates cannot be in the past.') 
             else:
                 qs = Booking.objects.filter(
+                    confirmed=1,
                     check_in__lt=check_out,
                     check_out__gt=check_in,
                 )
@@ -246,6 +299,7 @@ def EventRoom(request):
             else:
                 # Query to filter out overlapping bookings
                 qs = Booking.objects.filter(
+                    confirmed=1,
                     check_in__lt=check_out,
                     check_out__gt=check_in,
                 )
@@ -303,6 +357,7 @@ def EventBooking(request,room_no):
             
             qs = Booking.objects.filter(
                 room=room,
+                confirmed=1,
                 check_in__lt=check_out,
                 check_out__gt=check_in,
             )
@@ -462,6 +517,12 @@ def Bookin(request,room_no):
             messages.error(request, 'Provide future date to book room')
         else:
             qs = Booking.objects.filter(
+                confirmed=1,
+                room=room,
+                check_in__lt=check_out,
+                check_out__gt=check_in,
+            )
+            qs = Booking.objects.exclude(confirmed=0).filter(
                 room=room,
                 check_in__lt=check_out,
                 check_out__gt=check_in,
@@ -484,6 +545,7 @@ def Bookin(request,room_no):
                     check_in=check_in,
                     check_out=check_out,
                     tot_price=total_price,
+                    confirmed=0,
                     payment_method=payment_method,
                     role=role,
                 )
@@ -493,7 +555,7 @@ def Bookin(request,room_no):
 
 @user_passes_test(is_admin, login_url='/')
 def Booking_list(request):
-    booking_list=Booking.objects.all()
+    booking_list=Booking.objects.all().order_by('-booking_id')
     return render(request,'Booking_list.html',{'booking_list':booking_list,'page_name':"BOOKING LIST"})
 
 @user_passes_test(is_admin, login_url='/')
@@ -510,12 +572,18 @@ def reject_booking(request, booking_id):
         from_email = settings.EMAIL_HOST_USER
         to_email = [user_email]
         send_mail(subject, message, from_email, to_email)
-        booking.delete() 
+        booking.confirmed = 2 
+
+        booking.save() 
         return redirect('/Booking_list/')
 
 @user_passes_test(is_admin, login_url='/')
 def approve_booking(request, booking_id):
-        booking = Booking.objects.get(pk=booking_id)
+
+        booking = get_object_or_404(Booking, pk=booking_id)
+        room = booking.room  # Assuming there is a ForeignKey relationship from Booking to Room
+        room.status = 'Not available currently'  # Set status to not available
+        room.save()
 
         user_email = booking.email
         subject = 'Booking Approval Notification'
@@ -528,7 +596,7 @@ def approve_booking(request, booking_id):
         from_email = settings.EMAIL_HOST_USER
         to_email = [user_email]
         send_mail(subject, message, from_email, to_email)
-        booking.confirmed = True  # Set the confirmed field to True
+        booking.confirmed = 1  # Set the confirmed field to True
 
         booking.save()        
         return redirect('/Booking_list/')

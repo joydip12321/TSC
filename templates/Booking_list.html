@@ -31,7 +31,7 @@
                     <td class="px-4 py-2">{{ bl.check_out }}</td>
                     <td class="px-4 py-2">{{ bl.tot_price }}</td>
                     <td class="px-4 py-2">{{ bl.payment_method }}</td>
-                    {% if not bl.confirmed %}
+                    {% if bl.confirmed == 0 %}
                     <td class="px-4 py-2">
                         <a href="{% url 'approve_booking' bl.booking_id %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 transition duration-200" onclick="return confirm('Are you sure you want to approve this booking?');">Approve</a>
                         <a href="{% url 'reject_booking' bl.booking_id %}" class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200" onclick="return confirm('Are you sure you want to reject this booking?');">Reject</a>
@@ -39,7 +39,7 @@
                     {% else %}
                     <td class="px-4 py-2"></td>
                     {% endif %}
-                    {% if bl.confirmed %}
+                    {% if bl.confirmed == 1 %}
                     <td class="px-4 py-2 text-green-500 font-semibold">Confirmed</td>
                     {% else %}
                     <td class="px-4 py-2 text-red-500 font-semibold">Not Confirmed</td>
