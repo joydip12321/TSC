@@ -1,0 +1,37 @@
+{% extends "image.html" %}
+
+{% block first %}
+<div class="container mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-center text-green-600 mb-8">My Orders</h2>
+    <div class="grid grid-cols-1 gap-6">
+        {% for order in orders %}
+            <div class="flex flex-col md:flex-row bg-gray-100 rounded-lg shadow-md p-4 transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                <div class="flex-1 mb-2 md:mb-0 md:mr-4">
+                    <h3 class="text-lg font-semibold text-blue-600 mb-1">{{ order.items_summary }}</h3>
+                    <p class="text-gray-700"><strong>Location:</strong> {{ order.location }}</p>
+                    <p class="text-gray-700">
+                        <strong>Status:</strong> 
+                        <span class="{% if order.status == 'Pending' %}text-red-500{% elif order.status == 'Order Confirmed' %}text-green-500{% else %}text-blue-500{% endif %}">
+                            {{ order.status }}
+                        </span>
+                    </p>                </div>
+                <div flex-1 mb-2 md:mb-0 md:mr-4>
+                <div class="flex-none mb-2 md:mb-0 md:mr-4">
+                    <p class="text-gray-700"><strong>Quantity:</strong> {{ order.quantity }}</p>
+                </div>
+
+                <div class="flex-none">
+                    <p class="text-gray-700"><strong>Total Price:</strong> ${{ order.price }}</p>
+                </div>
+                <div class="">
+                    <p class="text-gray-700"><strong>Order Time: </strong> {{ order.order_time }}</p>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

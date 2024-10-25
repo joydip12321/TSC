@@ -164,7 +164,7 @@ def AddRoom(request):
     }
     return render(request, "AddRoom.html", context)
 
-
+@user_passes_test(is_admin, login_url='/')
 def AdminRoom(request):
     # Create a RoomForm instance for potential use in the template
     room_form = RoomForm()
@@ -183,7 +183,7 @@ def AdminRoom(request):
 
     return render(request, "adminRoom.html", {'rooms': rooms, 'room_form': room_form})
 
-
+@user_passes_test(is_admin, login_url='/')
 def UpdateRoom(request, room_id):
     room = get_object_or_404(Room, id=room_id)  # Fetch the room based on room_id
     if request.method == "POST":
@@ -201,6 +201,7 @@ def UpdateRoom(request, room_id):
     }
     return render(request, "update_room.html", context)  # Create a template for updating
 
+@user_passes_test(is_admin, login_url='/')
 def DeleteRoom(request, room_id):
     room = get_object_or_404(Room, id=room_id)  # Fetch the room based on room_id
     room.delete()  # Delete the room
@@ -326,7 +327,7 @@ def EventRoom(request):
 
 @custom_login_required
 def EventBooking(request,room_no):
-    hours = list(range(9, 24))  # 9 AM to 11 PM (for start and end times)
+    hours = list(range(9, 24))  
 
     user = request.user
     try:
@@ -553,6 +554,12 @@ def Bookin(request,room_no):
                 return redirect('room_list')
     return render(request,'Booking.html',{'room':room,'room_price':room_price,'page_name':"BOOKING"})
 
+@custom_login_required
+def UserBookingList(request):
+    user=request.user
+    booking_list=Booking.objects.all().order_by('-booking_id')
+    return render(request,'user_booking_list.html',{'booking_list':booking_list})
+
 @user_passes_test(is_admin, login_url='/')
 def Booking_list(request):
     booking_list=Booking.objects.all().order_by('-booking_id')
@@ -647,56 +654,80 @@ def AddCart(request, pk):
     
     return redirect('/item/')
 
+
 @custom_login_required
 def ViewCart(request):
     cart = request.session.get('cart', {})
-    user=request.user
+    user = request.user
 
     try:
         user_profile = UserProfile.objects.get(user=user)
         role = user_profile.role
-        phone=user_profile.phone
+        phone = user_profile.phone
     except UserProfile.DoesNotExist:
         role = "admin"
-        phone="0000000000"
+        phone = "0000000000"
+
     # Prepare a list of cart items for rendering
     cart_items = []
-
-    total_price = 0
-    # user=request.user
     for item_id, item_details in cart.items():
+        item_details['id'] = item_id  # Ensure the ID is part of the item details
         cart_items.append(item_details)
 
     if request.method == 'POST':
-            cart = request.session.get('cart', {})
-            location = request.POST.get('location')
+        location = request.POST.get('location')
+        items_summary = []
+        total_price = 0
+        tot_quantity=0
 
-            # Loop through cart items to create order records
-            for item_id, item_details in cart.items():
-                product = MenuItem.objects.get(id=item_id)
-                quantity=int(request.POST.get(f'quantity_',0)) # Use item_id directly
-                # Calculate total price for each item
+        # Loop through cart items to create order summary
+        for item_id, item_details in cart.items():
+            product = MenuItem.objects.get(id=item_id)
+            q=f'quantity_{item_id}'
+            quantity = int(request.POST.get(q, 0))
+            tot_quantity+=quantity
+            if quantity > 0:
                 item_total_price = product.price * quantity
-                # Create Order instance
-                if quantity >0:
-                    order_item=Orders(
-                        user=user,
-                        item=product,
-                        email=user.email,
-                        location=location,
-                        phone=phone,
-                        role=role,
-                        quantity=quantity,
-                        price=item_total_price,
-                        status='Pending',
+                total_price += item_total_price
+                items_summary.append(f"{product.name} = {quantity}  ")
 
-                    )
-                    order_item.save()  # Save each order item
-                    messages.success(request, f'Order Request send successfully,wait for confirmation')
+        items_summary_text = ", ".join(items_summary)
 
+        # Create a single order with total information
+        order = Orders(
+            user=user,
+            items_summary=items_summary_text,
+            email=user.email,
+            location=location,
+            phone=phone,
+            role=role,
+            quantity=tot_quantity,
+            price=total_price,
+            status='Pending',
+        )
+        order.save()
+        messages.success(request, "Order request sent successfully. Wait for confirmation e-mail from us.")
+        # Clear the cart after order is placed
+        request.session['cart'] = {}
 
+        # Redirect to the cart page after submitting the order to avoid resubmission
+        return redirect('my_orders')
 
-            # Clear the cart after order is placed
-            request.session['cart'] = {}
-
+    # Render the cart page if method is GET
     return render(request, 'cart.html', {'cart_items': cart_items})
+
+
+@user_passes_test(is_admin, login_url='/')
+def AdminOrder(request):
+    orders = Orders.objects.all().order_by('-order_time')   # Retrieve all orders
+    return render(request, 'admin_order.html', {'orders': orders})
+
+@custom_login_required
+def UserOrderList(request):
+    user = request.user
+
+    # Fetch orders related to the logged-in user
+    orders = Orders.objects.filter(user=user).order_by('-order_time')  # Optionally order by order time
+
+    # Render the order list template with the fetched orders
+    return render(request, 'user_order_list.html', {'orders': orders})

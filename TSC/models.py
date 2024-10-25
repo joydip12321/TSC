@@ -101,7 +101,7 @@ class Orders(models.Model):
         ('Delivered','Delivered'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Change to ForeignKey
-    item=models.ForeignKey('MenuItem',on_delete=models.CASCADE,null=True)
+    items_summary = models.TextField(null=True)  # Add this for order summary
     email = models.CharField(max_length=50,null=True)
     role = models.CharField(max_length=20,null=True)
     location = models.CharField(max_length=500,null=True)
@@ -111,4 +111,4 @@ class Orders(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     price = models.PositiveIntegerField(default=0)
     def __str__(self):
-        return f"{self.item} ordered by {self.user.username}"
+        return f"{self.items_summary} ordered by {self.user.username}"

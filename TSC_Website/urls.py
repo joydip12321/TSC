@@ -52,8 +52,9 @@ urlpatterns = [
 
     path('office_room',views.OfficeRoom,name="office_room"),
     path('other_room',views.OtherRoom,name="other_room"),
+    path('user_booking_list',views.UserBookingList,name="user_booking_list"),
+    path('my_orders',views.UserOrderList,name="my_orders"),
 
-    
     path('Booking/<int:room_no>/',views.Bookin,name="Booking"),
     path('event_booking/<int:room_no>/',views.EventBooking,name="event_booking"),
 
@@ -63,6 +64,8 @@ urlpatterns = [
     path('adminRoom/',views.AdminRoom,name="adminRoom"),
     path('update_room/<int:room_id>',views.UpdateRoom,name="update_room"),
     path('delete_room/<int:room_id>',views.DeleteRoom,name="delete_room"),
+    path('admin_order/',views.AdminOrder,name="admin_order"),
+
 
 
 
