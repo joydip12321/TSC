@@ -7,16 +7,18 @@
     <div class="row">
         <div class="col-lg-12 mb-4 p-8 rounded shadow-lg bg-blue-200 items-center justify-center">
             <h4 class="text-center text-2xl font-semibold mb-6 text-gray-700">Check Room Availability</h4>
-            <form method="post" class="space-y-2"> <!-- Add spacing between form elements -->
+            <form method="post" class="space-y-2">
                 {% csrf_token %}
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="mb-3">
                         <label for="check_in" class="block text-gray-600 mb-2">Check-In Date</label>
-                        <input type="date" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" name="check_in" id="check_in">
+                        <input type="date" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" 
+                               name="check_in" id="check_in" value="{{ check_in }}">
                     </div>
                     <div class="mb-3">
                         <label for="check_out" class="block text-gray-600 mb-2">Check-Out Date</label>
-                        <input type="date" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" name="check_out" id="check_out">
+                        <input type="date" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" 
+                               name="check_out" id="check_out" value="{{ check_out }}">
                     </div>
                     <div class="mb-3 flex items-end">
                         <button type="submit" class="btn btn-primary w-1/2 bg-blue-500 text-white font-semibold py-2 rounded shadow hover:bg-blue-600 transition duration-200">Submit</button>
@@ -26,6 +28,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Guest Rooms Section -->
 <h2 class="mt-3 pt-5 mb-5 text-center font-bold text-3xl text-blue-900">Guest Rooms</h2>

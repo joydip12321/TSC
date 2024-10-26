@@ -12,17 +12,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="mb-3">
                         <label for="room" class="block text-gray-600 mb-2">Room Number</label>
-                        <input type="text" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" name="room" id="room" placeholder="Enter room name or number">
+                        <input type="text" value="{{room_name}}" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" name="room" id="room" placeholder="Enter room name or number">
                     </div>
                     <div class="mb-3">
                         <label for="status" class="block text-gray-600 mb-2">Room Status (Optional)</label>
                         <select class="form-control shadow-none w-2/3 border rounded px-3 py-2" name="status" id="status">
-                            <option value="" selected disabled>Select Status</option>
-                            <option value="Available for booking">Available for booking</option>
-                            <option value="Not available currently">Not available currently</option>
-                            <option value="Not for Booking">Not for Booking</option>
+                            <option value="" disabled {% if not status %}selected{% endif %}>Select Status</option>
+                            <option value="Available for booking" {% if status == "Available for booking" %}selected{% endif %}>Available for booking</option>
+                            <option value="Not available currently" {% if status == "Not available currently" %}selected{% endif %}>Not available currently</option>
+                            <option value="Not for Booking" {% if status == "Not for Booking" %}selected{% endif %}>Not for Booking</option>
                         </select>
                     </div>
+                    
                     <div class="mb-3 flex items-end">
                         <button type="submit" class="btn btn-primary w-1/2 bg-blue-500 text-white font-semibold py-2 rounded shadow hover:bg-blue-600 transition duration-200">Submit</button>
                     </div>

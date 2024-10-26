@@ -6,3 +6,7 @@ register = template.Library()
 def add_class(field, css_class):
     """Adds a CSS class to a form field."""
     return field.as_widget(attrs={"class": css_class})
+
+@register.filter
+def is_digit(value):
+    return str(value).isdigit()

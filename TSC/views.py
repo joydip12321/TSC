@@ -209,16 +209,23 @@ def DeleteRoom(request, room_id):
     return redirect('adminRoom')  # Redirect to room managemen
 
 
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.shortcuts import render
+from .models import Room
+
 def AllRoom(request):
-    floor = request.GET.get('floor')  # Get the floor from the GET request
-    if floor is not None:  # If a floor was selected
+    # Get the floor from the GET request and ensure it's a valid digit
+    floor = request.GET.get('floor')
+    if floor and floor.isdigit():  # Check if floor is provided and is a digit
+        floor = int(floor)
         # Filter rooms based on the selected floor
-        room = Room.objects.filter(room__gte=100 * (int(floor)+1), room__lt=100 * (int(floor)+2)).order_by('-id')
+        room = Room.objects.filter(room__gte=100 * (floor + 1), room__lt=100 * (floor + 2)).order_by('-id')
     else:
-        # If no floor is selected, show all rooms
+        # If no valid floor is selected, show all rooms
         room = Room.objects.all().order_by('-id')
 
-    paginator = Paginator(room, 6)  # Paginate the results, 6 rooms per page
+    # Paginate the results, 6 rooms per page
+    paginator = Paginator(room, 6)
     page_no = request.GET.get('page')  # Get the current page number
     try:
         room = paginator.page(page_no)
@@ -227,12 +234,13 @@ def AllRoom(request):
     except EmptyPage:
         room = paginator.page(paginator.num_pages)  # Show last page if page number is out of range
 
-    return render(request, "AllRoom.html", {'room': room, 'selected_floor': floor})  # Pass the selected floor to the context
+    return render(request, "AllRoom.html", {'room': room, 'selected_floor': floor})
 
 def GuestRoom(request):
     available_room = Room.objects.filter(roomtype__roomtype="GuestRooms").order_by('-id')  # or any other field
     room_type = Room_Type.objects.all()
-    
+    check_in=""
+    check_out=""
     if request.method == "POST":
         check_in = request.POST.get('check_in')
         check_out = request.POST.get('check_out')
@@ -270,6 +278,8 @@ def GuestRoom(request):
         'room': available_room,
         'page_name': "ROOMS",
         'room_type': room_type,
+        'check_in': check_in,
+        'check_out': check_out,
     }
     return render(request, "Room_list.html", context)
 
@@ -277,7 +287,9 @@ def GuestRoom(request):
 def EventRoom(request):
     available_room = Room.objects.filter(roomtype__roomtype="EventSpaces").order_by('-id')
     room_type = Room_Type.objects.all()
-    
+    check_date=""
+    start_hour = None
+    end_hour = None
     if request.method == "POST":
         check_date = request.POST.get('check_date')  # Assume this is the date input
         start_hour = request.POST.get('start_time')
@@ -322,6 +334,9 @@ def EventRoom(request):
         'page_name': "ROOMS",
         'room_type': room_type,
         'hours': hours,
+        'check_date':check_date,
+        'start_hour':start_hour,
+        'end_hour':end_hour,
     }
     return render(request, "Event_room.html", context)
 
@@ -392,7 +407,8 @@ def EventBooking(request,room_no):
 def ClubRoom(request):
     available_room = Room.objects.filter(roomtype__roomtype="ClubSocieties").order_by('-id')
     room_type = Room_Type.objects.all()
-    
+    room_name=""
+    status=""
     if request.method == "POST":
         room_name = request.POST.get('room')  # Get the room name input
         status = request.POST.get('status')  # Get the status input
@@ -418,6 +434,8 @@ def ClubRoom(request):
         'room': available_room,
         'page_name': "ROOMS",
         'room_type': room_type,
+        'room_name':room_name,
+        'status':status,
     }
     return render(request, "Club_room.html", context)
 
