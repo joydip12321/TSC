@@ -36,6 +36,8 @@ urlpatterns = [
     path('AdminLogout/',views.AdminLogout,name="AdminLogout"),
     
     path('register/', views.register, name='register'),
+    path('activate/<uidb64>/<token>/', views.activate, name='activate'),
+
     path('login/', views.LogIn, name='login'),
     path('logout/',views.Logout,name="logout"),
 

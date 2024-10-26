@@ -18,8 +18,14 @@ from datetime import datetime,timedelta
 from functools import wraps
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-
-
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.urls import reverse 
+from django.utils.encoding import force_str
+from django.core.mail import EmailMessage
 
 
 def custom_login_required(function=None, redirect_field_name='next', login_url=None):
@@ -59,26 +65,59 @@ def register(request):
         profile_form = UserProfileForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save()
+            user = user_form.save(commit=False)
+            user.is_active = False  # Deactivate account until email is confirmed
+            user.save()
+
+            # Save the profile form
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
-            messages.success(request, "Registration successful")
-            return redirect('login')  # Redirect to a success page
+
+            # Generate email verification token
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your account'
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            activation_link = reverse('activate', kwargs={'uidb64': uid, 'token': token})
+            activation_url = f'http://{current_site.domain}{activation_link}'
+            message = render_to_string('activation_email.html', {
+                'user': user,
+                'activation_url': activation_url,
+            })
+            email = EmailMessage(mail_subject, message, settings.EMAIL_HOST_USER, [user.email])
+            email.content_subtype = 'html'  # Set the email content as HTML
+            email.send()
+
+            messages.success(request, "Registration successful. Please confirm your email address to activate your account.")
+            return redirect('login')
         else:
-            
             for error in user_form.errors.values():
                 messages.error(request, error.as_text())
             for error in profile_form.errors.values():
                 messages.error(request, error.as_text())
-
     else:
         user_form = UserRegistrationForm()
         profile_form = UserProfileForm()
 
-    # Render the form with existing data, so it won't clear the fields
     return render(request, 'register.html', {'user_form': user_form, 'profile_form': profile_form})
 
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Your account has been activated successfully!")
+        return redirect('login')
+    else:
+        messages.error(request, "Activation link is invalid!")
+        return redirect('register')
 
 def LogIn(request):
     if request.method=="POST":
