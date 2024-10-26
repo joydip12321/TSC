@@ -1,0 +1,62 @@
+{% extends "image.html" %}
+{% block first %}
+
+<section class="custom_order_section layout_padding-bottom py-10">
+    <div class="container mx-auto px-4">
+        <div class="heading_container heading_center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 text-center">
+                Custom Order
+            </h2>
+        </div>
+
+        <form method="POST" action="{% url 'custom_order' %}" class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
+            {% csrf_token %}
+
+            <!-- Input fields for item names and quantities -->
+            <div id="item-container">
+                <div class="item-input mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Item Name:</label>
+                    <input type="text" name="item_name_1" class="border rounded w-full p-2 mt-1" required>
+
+                    <label class="block text-sm font-medium text-gray-700 mt-2">Quantity:</label>
+                    <input type="number" name="quantity_1" min="1" class="border rounded w-full p-2 mt-1" required>
+                </div>
+            </div>
+
+            <button type="button" id="add-item" class="bg-blue-500 text-white px-4 py-2 rounded-lg mb-4">Add Another Item</button>
+
+            <div class="mb-4">
+                <label for="location" class="block text-sm font-medium text-gray-700">Location:</label>
+                <input type="text" id="location" name="location" class="border rounded w-full p-2 mt-1" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="order_time" class="block text-sm font-medium text-gray-700">Order Time:</label>
+                <input type="datetime-local" id="order_time" name="order_time" class="border rounded w-full p-2 mt-1" required>
+            </div>
+
+            <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                Submit Custom Order
+            </button>
+        </form>
+    </div>
+</section>
+
+<script>
+    document.getElementById('add-item').addEventListener('click', function() {
+        const itemCount = document.querySelectorAll('.item-input').length + 1;
+        const itemContainer = document.getElementById('item-container');
+        const newItemHTML = `
+            <div class="item-input mb-4">
+                <label class="block text-sm font-medium text-gray-700">Item Name:</label>
+                <input type="text" name="item_name_${itemCount}" class="border rounded w-full p-2 mt-1" required>
+
+                <label class="block text-sm font-medium text-gray-700 mt-2">Quantity:</label>
+                <input type="number" name="quantity_${itemCount}" min="1" class="border rounded w-full p-2 mt-1" required>
+            </div>
+        `;
+        itemContainer.insertAdjacentHTML('beforeend', newItemHTML);
+    });
+</script>
+
+{% endblock %}

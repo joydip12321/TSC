@@ -781,6 +781,61 @@ def ViewCart(request):
     # Render the cart page if method is GET
     return render(request, 'cart.html', {'cart_items': cart_items})
 
+@custom_login_required
+def CustomOrder(request):
+    user = request.user
+
+    try:
+        user_profile = UserProfile.objects.get(user=user)
+        role = user_profile.role
+        phone = user_profile.phone
+    except UserProfile.DoesNotExist:
+        role = "admin"
+        phone = "0000000000"
+
+    if request.method == 'POST':
+        location = request.POST.get('location')
+        order_time = request.POST.get('order_time')
+        items_summary = []
+        total_price = 0
+        tot_quantity = 0
+
+        # Process each item name and quantity submitted by the user
+        for key in request.POST:
+            if key.startswith('item_name_'):
+                item_id = key.split('_')[-1]  # Extract the item ID from the key
+                item_name = request.POST.get(f'item_name_{item_id}')
+                quantity = int(request.POST.get(f'quantity_{item_id}', 0))
+
+                if quantity > 0:
+                        
+                        tot_quantity += quantity
+                        items_summary.append(f"{item_name} = {quantity}")
+                   
+
+        if items_summary:
+            items_summary_text = ", ".join(items_summary)
+
+            # Create a custom order
+            order = Orders(
+                user=user,
+                items_summary=items_summary_text,
+                email=user.email,
+                location=location,
+                phone=phone,
+                role=role,
+                order_time=order_time,
+                quantity=tot_quantity,
+                price=total_price,
+                status='Pending',
+            )
+            order.save()
+            messages.success(request, "Custom order request sent successfully. Wait for confirmation e-mail from us.")
+            return redirect('my_orders')
+
+    # Render the custom order form if method is GET
+    return render(request, 'custom_order.html')
+
 
 @user_passes_test(is_admin, login_url='/')
 def AdminOrder(request):
@@ -836,7 +891,7 @@ def UserOrderList(request):
     user = request.user
 
     # Fetch orders related to the logged-in user
-    orders = Orders.objects.filter(user=user).order_by('-order_time')  # Optionally order by order time
+    orders = Orders.objects.filter(user=user).order_by('-id')  # Optionally order by order time
 
     # Render the order list template with the fetched orders
     return render(request, 'user_order_list.html', {'orders': orders})

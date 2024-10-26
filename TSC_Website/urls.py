@@ -83,6 +83,8 @@ urlpatterns = [
     path('dinning/', views.Dinning, name='dinning'),
     path('add_to_cart/<int:pk>/',views.AddCart,name="add_to_cart"),
     path('view_cart/', views.ViewCart, name='view_cart'),
+    path('custom_order/', views.CustomOrder, name='custom_order'),
+
     path('addItem/',views.AddItem,name="addItem"),
     path('item/',views.Item,name="item"),
 
