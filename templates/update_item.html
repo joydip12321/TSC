@@ -1,0 +1,25 @@
+{% extends "Room_navbar.html" %}
+{% load custom_tags %}  <!-- Load your custom tags here -->
+
+{% block first %}
+<div class="container mx-auto mt-5 p-4 bg-white shadow-md rounded-lg max-w-md"> <!-- Set max width for the form -->
+    <h1 class="text-2xl font-bold mb-4">Update Menu Item: {{ item.name }}</h1>
+    
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}  <!-- Show non-field errors -->
+        <div class="space-y-2">
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 font-medium">{{ field.label }}</label>
+                    {{ field|add_class:"border border-gray-300 rounded p-2 w-full" }}  <!-- Apply Tailwind classes -->
+                    {{ field.errors }}  <!-- Show field-specific errors -->
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">Update Menu Item</button> <!-- Full width for button -->
+    </form>
+
+    <a href="{% url 'adminItem' %}" class="text-blue-500 mt-4 inline-block hover:underline">Back to Menu Management</a>
+</div>
+{% endblock %}

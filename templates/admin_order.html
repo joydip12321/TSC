@@ -1,7 +1,7 @@
 {% extends "image.html" %}
 
 {% block first %}
-<div class="container mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
+<div class="container mx-auto mt-10 mb-10 p-4 bg-white rounded-lg shadow-lg">
     <h2 class="text-2xl font-bold text-center text-green-600 mb-8">Admin Order List</h2>
   
     <table class="min-w-full divide-y divide-gray-300">
@@ -11,6 +11,7 @@
                 <th class="px-4 py-2">Status</th>
                 <th class="px-4 py-2">Quantity</th>
                 <th class="px-4 py-2">Price</th>
+                <th class="px-4 py-2">Delivery Time</th>
                 <th class="px-4 py-2">Actions</th>
             </tr>
         </thead>
@@ -25,14 +26,13 @@
                     </td>
                     <td class="border px-4 py-2">{{ order.quantity }}</td>
                     <td class="border px-4 py-2">${{ order.price }}</td>
+                    <td class="border px-4 py-2">{{ order.order_time }}</td>
+
                     <td class="border px-4 py-2 flex justify-center">
-                        <a href="#" class="text-blue-600 hover:text-blue-800 mr-2" title="View Order Details">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="#" class="text-green-600 hover:text-green-800 mr-2" title="Confirm Order">
+                        <a href="{% url 'approve_order' order.id %}" class="text-green-600 hover:text-green-800 mr-2" title="Confirm Order" onclick="return confirm('Are you sure you want to confirm this order?');">
                             <i class="fas fa-check"></i>
                         </a>
-                        <a href="#" class="text-red-600 hover:text-red-800" title="Cancel Order">
+                        <a href="{% url 'reject_order' order.id %}" class="text-red-600 hover:text-red-800" title="Cancel Order" onclick="return confirm('Are you sure you want to reject this order?');">
                             <i class="fas fa-times"></i>
                         </a>
                     </td>

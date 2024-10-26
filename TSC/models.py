@@ -106,9 +106,19 @@ class Orders(models.Model):
     role = models.CharField(max_length=20,null=True)
     location = models.CharField(max_length=500,null=True)
     phone = models.CharField(max_length=20,null=True)
-    order_time= models.DateTimeField(auto_now_add=True,null=True)
+    order_time= models.DateTimeField(null=True)
     status=models.CharField(max_length=50,null=True,choices=STATUS)
     quantity = models.PositiveIntegerField(default=1)
     price = models.PositiveIntegerField(default=0)
     def __str__(self):
         return f"{self.items_summary} ordered by {self.user.username}"
+    
+
+class Notification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Link to the User model
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)  # Field to track if the notification is read
+
+    def __str__(self):
+        return f"Notification for {self.user.username} at {self.timestamp}"

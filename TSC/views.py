@@ -17,6 +17,8 @@ from .forms import *
 from datetime import datetime,timedelta
 from functools import wraps
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+
 
 
 
@@ -301,8 +303,12 @@ def EventRoom(request):
             today = datetime.now().date()
 
             # Combine date with hours to create datetime objects
-            check_in = datetime.combine(parse_date(check_date), datetime.min.time()).replace(hour=int(start_hour))
-            check_out = datetime.combine(parse_date(check_date), datetime.min.time()).replace(hour=int(end_hour))
+            check_in = timezone.make_aware(
+            datetime.combine(parse_date(check_date), datetime.min.time()).replace(hour=int(start_hour))
+            )
+            check_out = timezone.make_aware(
+            datetime.combine(parse_date(check_date), datetime.min.time()).replace(hour=int(end_hour))
+                )
 
             # Validation for check-in and check-out
             if check_in >= check_out:
@@ -327,22 +333,23 @@ def EventRoom(request):
     except EmptyPage:
         available_room = paginator.page(paginator.num_pages)
 
-    hours = list(range(9, 24))  # 9 AM to 11 PM (for start and end times)
+    hours = list(range(9, 23))  # 9 AM to 11 PM (for start and end times)
 
     context = {
         'room': available_room,
         'page_name': "ROOMS",
         'room_type': room_type,
         'hours': hours,
-        'check_date':check_date,
-        'start_hour':start_hour,
-        'end_hour':end_hour,
+        'check_date': check_date,
+        'start_hour': start_hour,
+        'end_hour': end_hour,
     }
     return render(request, "Event_room.html", context)
 
+
 @custom_login_required
 def EventBooking(request,room_no):
-    hours = list(range(9, 24))  
+    hours = list(range(9, 23))  
 
     user = request.user
     try:
@@ -586,6 +593,7 @@ def Booking_list(request):
 @user_passes_test(is_admin, login_url='/')
 def reject_booking(request, booking_id):
         booking = Booking.objects.get(pk=booking_id)
+        user=booking.user
         user_email = booking.email
         subject = 'Booking Rejection Notification'
         message = (
@@ -600,12 +608,16 @@ def reject_booking(request, booking_id):
         booking.confirmed = 2 
 
         booking.save() 
+        messages.success(request, f"The booking has been rejected and the notification has been sent to {user_email}.")
+        Notification.objects.create(user=user, message=message)
+
         return redirect('/Booking_list/')
 
 @user_passes_test(is_admin, login_url='/')
 def approve_booking(request, booking_id):
 
         booking = get_object_or_404(Booking, pk=booking_id)
+        user=booking.user
         room = booking.room  # Assuming there is a ForeignKey relationship from Booking to Room
         room.status = 'Not available currently'  # Set status to not available
         room.save()
@@ -623,7 +635,10 @@ def approve_booking(request, booking_id):
         send_mail(subject, message, from_email, to_email)
         booking.confirmed = 1  # Set the confirmed field to True
 
-        booking.save()        
+        booking.save()  
+        messages.success(request, f"The booking has been approved and the notification has been sent to {user_email}.")
+        Notification.objects.create(user=user, message=message)
+
         return redirect('/Booking_list/')
 
 @user_passes_test(is_admin, login_url='/')
@@ -636,8 +651,38 @@ def AddItem(request):
 
             messages.success(request, f'Item added successfully.')
 
-        return redirect('/addItem/')
+        return redirect('adminItem')
     return render(request,'Add_item.html',{'itemForm':ItemForm})
+
+@user_passes_test(is_admin, login_url='/')
+def AdminItem(request):
+    menu_items = MenuItem.objects.all().order_by('-id')
+    return render(request,'adminItem.html',{'menu_items':menu_items})
+
+@user_passes_test(is_admin, login_url='/')
+def UpdateItem(request, item_id):
+    item = get_object_or_404(MenuItem, id=item_id)
+    if request.method == 'POST':
+        form = ItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Menu item updated successfully!')
+            return redirect('adminItem')
+    else:
+        form = ItemForm(instance=item)
+
+    context = {
+        'form': form,
+        'item': item,
+    }
+    return render(request, "update_item.html", context)  # Create a template for updating
+
+@user_passes_test(is_admin, login_url='/')
+def DeleteItem(request, item_id):
+    item = get_object_or_404(MenuItem, id=item_id)  # Fetch the room based on room_id
+    item.delete()  # Delete the room
+    messages.success(request, f'Item {item.name} deleted successfully.')
+    return redirect('adminItem')  # Redirect to room managemen
 
 def Item(request):
     item=MenuItem.objects.all()
@@ -694,6 +739,7 @@ def ViewCart(request):
 
     if request.method == 'POST':
         location = request.POST.get('location')
+        order_time = request.POST.get('order_time')
         items_summary = []
         total_price = 0
         tot_quantity=0
@@ -719,6 +765,7 @@ def ViewCart(request):
             location=location,
             phone=phone,
             role=role,
+            order_time=order_time,
             quantity=tot_quantity,
             price=total_price,
             status='Pending',
@@ -739,6 +786,50 @@ def ViewCart(request):
 def AdminOrder(request):
     orders = Orders.objects.all().order_by('-order_time')   # Retrieve all orders
     return render(request, 'admin_order.html', {'orders': orders})
+@user_passes_test(is_admin, login_url='/')
+def reject_order(request, order_id):
+    order = get_object_or_404(Orders, pk=order_id)
+    user=order.user
+    user_email = order.email
+    subject = 'Order Rejection Notification'
+    message = (
+        f"Dear {order.user},\n\n"
+        f"We regret to inform you that your order (Order ID: {order_id}) has been rejected.\n\n"
+        "If you have any questions, please feel free to contact us.\n\n"
+        "Best regards,\nJUST TSC"
+    )
+    from_email = settings.EMAIL_HOST_USER
+    to_email = [user_email]
+    send_mail(subject, message, from_email, to_email)
+    order.status = 'Out for Delivery'  # Set the status to rejected
+
+    order.save() 
+    messages.success(request, f"The order has been rejected and the notification has been sent to {user_email}.")
+    Notification.objects.create(user=user, message=message)
+
+    return redirect('admin_order')  # Redirect to the admin orders page
+
+@user_passes_test(is_admin, login_url='/')
+def approve_order(request, order_id):
+    order = get_object_or_404(Orders, pk=order_id)
+    user=order.user
+    user_email = order.email
+    subject = 'Order Approval Notification'
+    message = (
+        f"Dear {order.user},\n\n"
+        f"We are happy to inform you that your order (Order ID: {order_id}) has been accepted.\n\n"
+        "If you have any questions, please feel free to contact us.\n\n"
+        "Best regards,\nJUST TSC"
+    )
+    from_email = settings.EMAIL_HOST_USER
+    to_email = [user_email]
+    send_mail(subject, message, from_email, to_email)
+    order.status = 'Order Confirmed'  # Set the status to accepted
+    messages.success(request, f"The order has been approved and the notification has been sent to {user_email}.")
+    Notification.objects.create(user=user, message=message)
+
+    order.save()        
+    return redirect('admin_order')  # Redirect to the admin orders page
 
 @custom_login_required
 def UserOrderList(request):
@@ -749,3 +840,23 @@ def UserOrderList(request):
 
     # Render the order list template with the fetched orders
     return render(request, 'user_order_list.html', {'orders': orders})
+
+
+
+
+@custom_login_required
+def user_notifications(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')
+
+    notifications.update(read=True)  # Update all notifications to read if you want to mark them as read
+
+    return render(request, 'user_notifications.html', {
+        'notifications': notifications,
+    })
+from django.http import JsonResponse
+
+def get_unread_notification_count(request):
+    if request.user.is_authenticated:
+        unread_count = Notification.objects.filter(user=request.user, read=False).count()
+        return JsonResponse({'unread_count': unread_count})
+    return JsonResponse({'unread_count': 0})

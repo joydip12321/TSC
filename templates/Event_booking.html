@@ -56,7 +56,7 @@
         endTimeSelect.innerHTML = '<option value="">Select Hour</option>';
         
         // Add options for end time
-        for (let hour = selectedStartTime + 1; hour <= 24; hour++) {  // Assuming max hour is 20
+        for (let hour = selectedStartTime + 1; hour < 24; hour++) {  // Assuming max hour is 20
             endTimeSelect.innerHTML += `<option value="${hour}">${hour}:00</option>`;
         }
     }

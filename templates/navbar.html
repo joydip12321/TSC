@@ -78,7 +78,7 @@
                     <a href="{% url 'Booking_list' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Booking</a>
                     </li>
                     <li class="mx-2 my-6 md:my-0 " >
-                        <a href="{% url 'addItem' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">AddItem</a>
+                        <a href="{% url 'adminItem' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Item</a>
                     </li>
                     <li class="mx-2 my-6 md:my-0 " >
                         <a href="{% url 'admin_order' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Orders</a>
@@ -92,6 +92,14 @@
                 <li class="mx-2 my-6 md:my-0 " >
                     <a href="{% url 'home' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">HOME</a>
                 </li>
+                {% if user.is_authenticated %}
+                <li class="relative group mx-2 my-6 md:my-0">
+                    <a href="{% url 'my_notifications' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
+                        <i class="fas fa-bell text-lg"></i> <!-- Notification icon -->
+                        <span class="unread-count ml-1 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-xs" style="display: none;">0</span>
+                    </a>
+                </li>
+            {% endif %}
                 <li class="mx-2 my-6 md:my-0">
                     
                     <a href="{% url 'notice' %}" class="text-xl hover:sm:text-white hover:text-pink-50 duration-500">NOTICES</a>
@@ -141,14 +149,18 @@
                             <a href="{% url 'item' %}" class="block">OurMenu</a>
                         </li>
                         <!-- Dropdown Item 2 -->
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'view_cart' %}" class="block">MyCart</a>
-                        </li>
+                       
                         <li class="px-4 py-2 hover:bg-blue-700">
                             <a href="{% url 'my_orders' %}" class="block">MyOrders</a>
                         </li>
                     </ul>
                 </li>
+                
+            
+
+
+                {% if user.is_authenticated %}
+            
                 <li class="relative group mx-2 my-6 md:my-0">
                     <!-- Cart Icon with SVG -->
                     <a href="{% url 'view_cart' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
@@ -162,14 +174,14 @@
                         {% endif %}
                     </a>
                 </li>
+                {%endif%}
                 
                 
-                
-                
+<!--                 
                 <li class="mx-2 my-6 md:my-0">
                     <a href="#" class="text-xl hover:sm:text-white hover:text-pink-50 duration-500">AboutUS</a>
                 </li>
-               
+                -->
 
                 <li class="relative group mx-2 my-6 md:my-0">
                     {% if user.is_authenticated %}
@@ -191,15 +203,21 @@
                     <!-- Dropdown -->
                     <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md" style="left: -10px;"> <!-- Adjusted left position -->
                         <!-- Dropdown Item 1 -->
+                     
+                    
+                    
                         {% if not user.is_authenticated %}
 
                         <li class="px-1 py-2 hover:bg-blue-700">
                             <a href="{% url 'register' %}" class="block">Register</a>
                         </li>
                         {%endif%}
+                        
+
                         <li class="px-1 py-2 hover:bg-blue-700">
                             <a href="{% url 'AdminLogin' %}" class="block">AdminLogin</a>
                         </li>
+
                         <!-- Dropdown Item 2 -->
                     </ul>
                 </li>
@@ -277,6 +295,26 @@
                 list.classList.remove('top-[80px]', 'opacity-100', 'menu-visible');
             }
         }
+
+    function updateUnreadCount() {
+        fetch("{% url 'get_unread_notification_count' %}")
+            .then(response => response.json())
+            .then(data => {
+                const countElement = document.querySelector('.unread-count');
+                if (data.unread_count > 0) {
+                    countElement.innerText = data.unread_count;
+                    countElement.style.display = 'inline'; // Show the count
+                } else {
+                    countElement.style.display = 'none'; // Hide the count
+                }
+            });
+    }
+
+    // Call updateUnreadCount every 10 seconds
+    setInterval(updateUnreadCount, 10000);
+    // Call once on page load
+    updateUnreadCount();
+
     </script>
 </body>
 

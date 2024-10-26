@@ -19,13 +19,13 @@
                     <div class="mb-3">
                         <label for="start_time" class="block text-gray-600 mb-2">Start Hour</label>
                         <select name="start_time" id="start_time" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" required onchange="updateEndTime()">
-                            <option value="" disabled>Select Hour</option>
+                            <option value="" selected disabled>Select Hour</option>
                             {% for hour in hours %}
-                                <option value="{{ hour }}" {% if start_hour is not None %}
-                                selected{% endif %}>{{ hour }}:00</option>
+                                <option value="{{ hour }}" {% if start_hour is not None %}selected{% endif %}>{{ hour }}:00</option>
                             {% endfor %}
                         </select>
                     </div>
+                    
                     <div class="mb-3">
                         <label for="end_time" class="block text-gray-600 mb-2">End Hour</label>
                         <select name="end_time" id="end_time" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" required>
@@ -43,19 +43,34 @@
 </div>
 
 <script>
-    function updateEndTime() {
-        const startTimeSelect = document.getElementById('start_time');
-        const endTimeSelect = document.getElementById('end_time');
-        const selectedStartTime = parseInt(startTimeSelect.value);
-        
-        // Clear existing options
-        endTimeSelect.innerHTML = '<option value="">Select Hour</option>';
-        
-        // Add options for end time
-        for (let hour = selectedStartTime + 1; hour <= 24; hour++) {
-            endTimeSelect.innerHTML += `<option value="${hour}"  >${hour}:00</option>`;
-        }
+function updateEndTime() {
+    const startTimeSelect = document.getElementById('start_time');
+    const endTimeSelect = document.getElementById('end_time');
+    const selectedStartTime = parseInt(startTimeSelect.value);
+    
+    // Clear existing options
+    endTimeSelect.innerHTML = '<option value="">Select Hour</option>';
+    
+    // Ensure 'end_hour' from the server is correctly set in the template context
+    const savedEndHour = parseInt("{{ end_hour|default_if_none:'' }}");
+
+    // Populate end time options based on selected start time
+    for (let hour = selectedStartTime + 1; hour <= 23; hour++) {
+        endTimeSelect.innerHTML += `<option value="${hour}" ${hour === savedEndHour ? 'selected' : ''}>${hour}:00</option>`;
     }
+}
+
+// Trigger 'updateEndTime' after page loads if start and end hours are set
+document.addEventListener('DOMContentLoaded', function() {
+    const savedStartHour = parseInt("{{ start_hour|default_if_none:'' }}");
+    if (savedStartHour) {
+        // Set start time initially and trigger update for end time
+        document.getElementById('start_time').value = savedStartHour;
+        updateEndTime();
+    }
+});
+
+
 </script>
 
 <!-- Room Display Section -->

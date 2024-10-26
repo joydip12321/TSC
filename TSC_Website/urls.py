@@ -65,8 +65,12 @@ urlpatterns = [
     path('update_room/<int:room_id>',views.UpdateRoom,name="update_room"),
     path('delete_room/<int:room_id>',views.DeleteRoom,name="delete_room"),
     path('admin_order/',views.AdminOrder,name="admin_order"),
+    path('reject_order/<int:order_id>/', views.reject_order, name='reject_order'),
+    path('approve_order/<int:order_id>/', views.approve_order, name='approve_order'),
 
-
+    path('adminItem/',views.AdminItem,name="adminItem"),
+    path('update_item/<int:item_id>',views.UpdateItem,name="update_item"),
+    path('delete_item/<int:item_id>',views.DeleteItem,name="delete_item"),
 
 
     
@@ -82,7 +86,9 @@ urlpatterns = [
     path('addItem/',views.AddItem,name="addItem"),
     path('item/',views.Item,name="item"),
 
+    path('my_notifications/', views.user_notifications, name='my_notifications'),
 
 
+    path('get_unread_notification_count/', views.get_unread_notification_count, name='get_unread_notification_count'),
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
