@@ -250,9 +250,6 @@ def DeleteRoom(request, room_id):
     return redirect('adminRoom')  # Redirect to room managemen
 
 
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render
-from .models import Room
 
 def AllRoom(request):
     # Get the floor from the GET request and ensure it's a valid digit
@@ -578,7 +575,7 @@ def Bookin(request,room_no):
             messages.error(request, 'Please provide all')
         elif parse_date(check_in) >= parse_date(check_out):
             messages.error(request, 'Check-out date must be after the check-in date.')
-        elif check_in_date <= today:
+        elif check_in_date < today:
             messages.error(request, 'Provide future date to book room')
         else:
             qs = Booking.objects.filter(
@@ -620,7 +617,6 @@ def Bookin(request,room_no):
 
 @custom_login_required
 def UserBookingList(request):
-    user=request.user
     booking_list=Booking.objects.all().order_by('-booking_id')
     return render(request,'user_booking_list.html',{'booking_list':booking_list})
 

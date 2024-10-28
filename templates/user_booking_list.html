@@ -11,6 +11,7 @@
                     <th scope="col" class="px-4 py-2">Booking ID</th>
                     <th scope="col" class="px-4 py-2">User Name</th>
                     <th scope="col" class="px-4 py-2">User Role</th>
+                    <th scope="col" class="px-4 py-2">Room Type</th>
                     <th scope="col" class="px-4 py-2">Room No</th>
                     <th scope="col" class="px-4 py-2">Check In</th>
                     <th scope="col" class="px-4 py-2">Check Out</th>
@@ -25,9 +26,10 @@
                     <td class="px-4 py-2">{{ bl.booking_id }}</td>
                     <td class="px-4 py-2">{{ bl.user }}</td>
                     <td class="px-4 py-2">{{ bl.role }}</td>
+                    <td class="px-4 py-2">{{ bl.room.roomtype }}</td>
                     <td class="px-4 py-2">{{ bl.room }}</td>
-                    <td class="px-4 py-2">{{ bl.check_in }}</td>
-                    <td class="px-4 py-2">{{ bl.check_out }}</td>
+                    <td class="px-4 py-2">{{ bl.check_in|date:"Y-m-d" }}</td>
+                    <td class="px-4 py-2">{{ bl.check_out|date:"Y-m-d" }}</td>
                     <td class="px-4 py-2">{{ bl.tot_price }}</td>
                     <td class="px-4 py-2">{{ bl.payment_method }}</td>
                     {% if bl.confirmed == 1 %}
