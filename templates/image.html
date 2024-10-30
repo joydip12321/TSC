@@ -1,6 +1,7 @@
 {% extends "navbar.html" %} {% block start %}
 <div class="relative">
-    <img src="/static/img/table.jpg" alt="" class="w-full h-80 object-cover">
+  {% load static %}
+  <img src="{% static 'img/table.jpg' %}" alt="" class="w-full h-80 object-cover">
 </div>
 
 {% if messages %}
