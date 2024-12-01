@@ -28,7 +28,7 @@
                         {{ item.description }}
                     </p>
                     <p class="text-lg font-bold text-gray-900">
-                        ${{ item.price }}
+                        <i class="fa-solid fa-bangladeshi-taka-sign"></i> {{ item.price }}
                     </p>
                     <form method="POST" action="{% url 'add_to_cart' item.pk %}" class="mt-4">
                         {% csrf_token %}
