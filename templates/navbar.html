@@ -108,56 +108,61 @@
                 <li class="relative group mx-2 my-6 md:my-0">
                     <a href="{% url 'all_room' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
                         ROOMS
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </a>
                 
                     <!-- Dropdown -->
                     <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md">
                         <!-- Dropdown Item 1 -->
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'room_list' %}" class="block">GuestRoom</a>
+                            <a href="{% url 'room_list' %}" class="block whitespace-nowrap">Guest Room</a>
                         </li>
                         <!-- Dropdown Item 2 -->
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'event_room' %}" class="block">EventSpaces</a>
+                            <a href="{% url 'event_room' %}" class="block whitespace-nowrap">Event Spaces</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'club_room' %}" class="block">ClubSociety</a>
+                            <a href="{% url 'club_room' %}" class="block whitespace-nowrap">Club Society</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'office_room' %}" class="block">OfficeRoom</a>
+                            <a href="{% url 'office_room' %}" class="block whitespace-nowrap">Office Room</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'other_room' %}" class="block">Others</a>
+                            <a href="{% url 'other_room' %}" class="block whitespace-nowrap">Others</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'user_booking_list' %}" class="block">MyBooking</a>
+                            <a href="{% url 'user_booking_list' %}" class="block whitespace-nowrap">My Booking</a>
                         </li>
-
                     </ul>
                 </li>
+                
                 <li class="relative group mx-2 my-6 md:my-0">
                     <a href="{% url 'dinning' %}" class="text-xl hover:text-white duration-500 flex items-center">
                         DINING
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </a>
                 
                     <!-- Dropdown -->
                     <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md">
                         <!-- Dropdown Item 1 -->
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'item' %}" class="block">OurMenu</a>
+                            <a href="{% url 'item' %}" class="block whitespace-nowrap">Our Menu</a>
                         </li>
                         <!-- Dropdown Item 2 -->
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'custom_order' %}" class="block">CustomOrder</a>
+                            <a href="{% url 'custom_order' %}" class="block whitespace-nowrap">Custom Order</a>
                         </li>
-                       
+                        <!-- Dropdown Item 3 -->
                         <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'my_orders' %}" class="block">MyOrders</a>
+                            <a href="{% url 'my_orders' %}" class="block whitespace-nowrap">My Orders</a>
                         </li>
                     </ul>
                 </li>
+                
                 
             
 
@@ -185,18 +190,17 @@
                     <a href="#" class="text-xl hover:sm:text-white hover:text-pink-50 duration-500">AboutUS</a>
                 </li>
                 -->
-
                 <li class="relative group mx-2 my-6 md:my-0">
                     {% if user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="text-xl hover:text-white duration-500 flex items-center">
-                        LogOut
+                        Logout
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </a>
                     {% else %}
                     <a href="{% url 'login' %}" class="text-xl hover:text-white duration-500 flex items-center">
-                        LogIn
+                        Login
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
@@ -204,24 +208,16 @@
                     {% endif %}
                     
                     <!-- Dropdown -->
-                    <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md" style="left: -10px;"> <!-- Adjusted left position -->
-                        <!-- Dropdown Item 1 -->
-                     
-                    
-                    
+                    <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md" style="left: -10px;">
                         {% if not user.is_authenticated %}
-
-                        <li class="px-1 py-2 hover:bg-blue-700">
-                            <a href="{% url 'register' %}" class="block">Register</a>
+                        <li class="px-4 py-2 hover:bg-blue-700">
+                            <a href="{% url 'register' %}" class="block whitespace-nowrap">Register</a>
                         </li>
-                        {%endif%}
+                        {% endif %}
                         
-
-                        <li class="px-1 py-2 hover:bg-blue-700">
-                            <a href="{% url 'AdminLogin' %}" class="block">AdminLogin</a>
+                        <li class="px-4 py-2 hover:bg-blue-700">
+                            <a href="{% url 'AdminLogin' %}" class="block whitespace-nowrap">Admin</a>
                         </li>
-
-                        <!-- Dropdown Item 2 -->
                     </ul>
                 </li>
                 
@@ -258,7 +254,7 @@
                     <li><a href="{% url 'home' %}" class="hover:text-cyan-500">Home</a></li>
                     <li><a href="{% url 'notice' %}" class="hover:text-cyan-500">Notices</a></li>
                     <li><a href="{% url 'room_list' %}" class="hover:text-cyan-500">Booking</a></li>
-                    <li><a href="{% url 'item' %}" class="hover:text-cyan-500">DINNING</a></li>
+                    <li><a href="{% url 'item' %}" class="hover:text-cyan-500">Dinning</a></li>
                     <li><a href="#" class="hover:text-cyan-500">About Us</a></li>
                 </ul>
             </div>

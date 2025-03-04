@@ -35,7 +35,7 @@
                     {% endif %}
                 </td>
                 <td class="py-2 px-4 border">{{ item.name }}</td>
-                <td class="py-2 px-4 border">${{ item.price }}</td>
+                <td class="py-2 px-4 border"><i class="fa-solid fa-bangladeshi-taka-sign"></i>{{ item.price }}</td>
                 <td class="py-2 px-4 border">{{ item.description }}</td>
                 <td class="py-2 px-4 border">
                     <a href="{% url 'update_item' item.id %}" class="text-blue-500 hover:text-blue-700">

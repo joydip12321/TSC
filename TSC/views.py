@@ -26,6 +26,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse 
 from django.utils.encoding import force_str
 from django.core.mail import EmailMessage
+from decimal import Decimal, InvalidOperation
 
 
 def custom_login_required(function=None, redirect_field_name='next', login_url=None):
@@ -437,7 +438,7 @@ def EventBooking(request,room_no):
                     room=room,
                     check_in=check_in,
                     check_out=check_out,
-                    tot_price=total_price,
+                    tot_price=Decimal(total_price),
                     payment_method='Cash',
                     role=role,
                 )
@@ -501,7 +502,7 @@ def ClubBooking(request, room_name):
         room=room,
         check_in=check_in_date,
         check_out=check_out_date,
-        tot_price=room.price,  # You can calculate total price if needed
+        tot_price=Decimal(room.price),  # You can calculate total price if needed
         payment_method='CASH',  # Default to CASH or let the user choose later
         role='Club',  # Adjust the role as necessary
     )

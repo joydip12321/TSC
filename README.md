@@ -9,7 +9,7 @@
 From navbar we can enter different type rooms and check availablity for booking and can make booking request
 ![image](https://github.com/user-attachments/assets/d38f182a-5646-477b-9233-01888625f472)
 
-###Like Guest Room
+### Like Guest Room
 ![image](https://github.com/user-attachments/assets/b7538538-50a3-47b3-bf8e-98e2237c9675)
 
 
