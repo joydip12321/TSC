@@ -1,1 +1,1 @@
-web: gunicorn TSC_Website.wsgi --log-file -
+web: gunicorn TSC.wsgi --log-file -
