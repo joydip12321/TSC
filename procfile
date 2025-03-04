@@ -1,1 +1,1 @@
-web: gunicorn TSC.wsgi
+web: gunicorn TSC_Website.wsgi
