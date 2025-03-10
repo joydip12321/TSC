@@ -276,7 +276,7 @@ def AllRoom(request):
     return render(request, "AllRoom.html", {'room': room, 'selected_floor': floor})
 
 def GuestRoom(request):
-    available_room = Room.objects.filter(roomtype__roomtype="GuestRooms").order_by('-id')  # or any other field
+    available_room = Room.objects.filter(roomtype__roomtype="Guest Room").order_by('-id')  # or any other field
     room_type = Room_Type.objects.all()
     check_in=""
     check_out=""
@@ -324,7 +324,7 @@ def GuestRoom(request):
 
 
 def EventRoom(request):
-    available_room = Room.objects.filter(roomtype__roomtype="EventSpaces").order_by('-id')
+    available_room = Room.objects.filter(roomtype__roomtype="Event Space").order_by('-id')
     room_type = Room_Type.objects.all()
     check_date=""
     start_hour = None
@@ -449,7 +449,7 @@ def EventBooking(request,room_no):
     return render(request, 'Event_booking.html', {'room': room, 'room_price': room_price,'hours':hours})
 
 def ClubRoom(request):
-    available_room = Room.objects.filter(roomtype__roomtype="ClubSocieties").order_by('-id')
+    available_room = Room.objects.filter(roomtype__roomtype="Club Society").order_by('-id')
     room_type = Room_Type.objects.all()
     room_name=""
     status=""
@@ -503,7 +503,7 @@ def ClubBooking(request, room_name):
         check_in=check_in_date,
         check_out=check_out_date,
         tot_price=Decimal(room.price),  # You can calculate total price if needed
-        payment_method='CASH',  # Default to CASH or let the user choose later
+        payment_method='Cash',  # Default to CASH or let the user choose later
         role='Club',  # Adjust the role as necessary
     )
 
@@ -512,7 +512,7 @@ def ClubBooking(request, room_name):
     return redirect('club_room')
 
 def OfficeRoom(request):
-    available_room = Room.objects.filter(roomtype__roomtype="OfficeRoom").order_by('-id')
+    available_room = Room.objects.filter(roomtype__roomtype="Office Room").order_by('-id')
     room_type = Room_Type.objects.all()
     
     
@@ -533,7 +533,7 @@ def OfficeRoom(request):
     return render(request, "Office_room.html", context)
 
 def OtherRoom(request):
-    available_room = Room.objects.filter(roomtype__roomtype="Other").order_by('-id')
+    available_room = Room.objects.filter(roomtype__roomtype="Other Room").order_by('-id')
     room_type = Room_Type.objects.all()
     
     
@@ -679,53 +679,79 @@ def approve_booking(request, booking_id):
 
 @user_passes_test(is_admin, login_url='/')
 def AddItem(request):
-    itemForm=ItemForm()
-    if request.method=='POST':
-        itemForm=ItemForm(request.POST, request.FILES)
+    itemForm = ItemForm()
+    
+    if request.method == 'POST':
+        itemForm = ItemForm(request.POST, request.FILES)
         if itemForm.is_valid():
-            itemForm.save()
+            item = itemForm.save(commit=False)  # Save item but do not commit yet
+            item.save()  # Commit the basic fields
 
-            messages.success(request, f'Item added successfully.')
+            # ✅ Save ManyToManyField separately
+            itemForm.save_m2m()  
 
-        return redirect('adminItem')
-    return render(request,'Add_item.html',{'itemForm':ItemForm})
+            messages.success(request, 'Item added successfully.')
+            return redirect('adminItem')  # Redirect to admin panel
+
+    return render(request, 'Add_item.html', {'itemForm': itemForm})
 
 @user_passes_test(is_admin, login_url='/')
 def AdminItem(request):
     menu_items = MenuItem.objects.all().order_by('-id')
-    return render(request,'adminItem.html',{'menu_items':menu_items})
+    return render(request, 'adminItem.html', {'menu_items': menu_items})
 
 @user_passes_test(is_admin, login_url='/')
 def UpdateItem(request, item_id):
     item = get_object_or_404(MenuItem, id=item_id)
+    
     if request.method == 'POST':
         form = ItemForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
-            form.save()
+            item = form.save(commit=False)
+            item.save()
+            form.save_m2m()  # ✅ Save ManyToManyField correctly
             messages.success(request, 'Menu item updated successfully!')
             return redirect('adminItem')
+
     else:
         form = ItemForm(instance=item)
 
-    context = {
-        'form': form,
-        'item': item,
-    }
-    return render(request, "update_item.html", context)  # Create a template for updating
+    return render(request, "update_item.html", {'form': form, 'item': item})
 
 @user_passes_test(is_admin, login_url='/')
 def DeleteItem(request, item_id):
-    item = get_object_or_404(MenuItem, id=item_id)  # Fetch the room based on room_id
-    item.delete()  # Delete the room
+    item = get_object_or_404(MenuItem, id=item_id)
+    item.delete()
     messages.success(request, f'Item {item.name} deleted successfully.')
-    return redirect('adminItem')  # Redirect to room managemen
+    return redirect('adminItem')
+
+ 
 
 def Item(request):
-    item=MenuItem.objects.all()
-    return render(request,'item.html',{'item':item})
+    """Filter menu items by exact meal time selection."""
+    
+    meal_times = MealTime.objects.all()  # Get all available meal times
+    selected_meal_times = request.GET.getlist('meal_time')  # Get selected filters as a list
+
+    if selected_meal_times:
+        # ✅ Ensure the item includes **ALL** selected meal times
+        item = MenuItem.objects.filter(meal_times__name__in=selected_meal_times).distinct()
+        for meal_time in selected_meal_times:
+            item = item.filter(meal_times__name=meal_time)
+    else:
+        item = MenuItem.objects.all()  # Show all items if no filter is selected
+
+    return render(request, 'item.html', {
+        'item': item,
+        'meal_times': meal_times,
+        'selected_meal_times': selected_meal_times
+    })
+
+
 
 def Dinning(request):
-    return render(request,"dinning.html")
+    return render(request, "dinning.html")
+
 
 @custom_login_required
 def AddCart(request, pk):
@@ -832,47 +858,54 @@ def CustomOrder(request):
     if request.method == 'POST':
         location = request.POST.get('location')
         order_time = request.POST.get('order_time')
+        order_items_json = request.POST.get('order_items')  # Get JSON data
+
+        if not order_items_json:
+            messages.error(request, "No items added to the order!")
+            return redirect('custom_order')
+
+        try:
+            order_items = json.loads(order_items_json)  # Convert JSON string to Python list
+        except json.JSONDecodeError:
+            messages.error(request, "Invalid order format. Please try again.")
+            return redirect('custom_order')
+
+        # Process items
         items_summary = []
-        total_price = 0
         tot_quantity = 0
 
-        # Process each item name and quantity submitted by the user
-        for key in request.POST:
-            if key.startswith('item_name_'):
-                item_id = key.split('_')[-1]  # Extract the item ID from the key
-                item_name = request.POST.get(f'item_name_{item_id}')
-                quantity = int(request.POST.get(f'quantity_{item_id}', 0))
+        for item in order_items:
+            item_name = item.get("name")
+            quantity = int(item.get("quantity", 0))
 
-                if quantity > 0:
-                        
-                        tot_quantity += quantity
-                        items_summary.append(f"{item_name} = {quantity}")
-                   
+            if quantity > 0:
+                tot_quantity += quantity
+                items_summary.append(f"{item_name} = {quantity}")
 
-        if items_summary:
-            items_summary_text = ", ".join(items_summary)
+        if not items_summary:
+            messages.error(request, "Please add at least one valid item.")
+            return redirect('custom_order')
 
-            # Create a custom order
-            order = Orders(
-                user=user,
-                items_summary=items_summary_text,
-                email=user.email,
-                location=location,
-                phone=phone,
-                role=role,
-                order_time=order_time,
-                quantity=tot_quantity,
-                price=total_price,
-                status='Pending',
-            )
-            order.save()
-            messages.success(request, "Custom order request sent successfully. Wait for confirmation e-mail from us.")
-            return redirect('my_orders')
+        items_summary_text = ", ".join(items_summary)
 
-    # Render the custom order form if method is GET
+        # Create the custom order
+        order = Orders(
+            user=user,
+            items_summary=items_summary_text,
+            email=user.email,
+            location=location,
+            phone=phone,
+            role=role,
+            order_time=order_time,
+            quantity=tot_quantity,
+            price=0,  
+            status='Pending',
+        )
+        order.save()
+        messages.success(request, "Custom order request sent successfully.")
+        return redirect('my_orders')
+
     return render(request, 'custom_order.html')
-
-
 @user_passes_test(is_admin, login_url='/')
 def AdminOrder(request):
     orders = Orders.objects.all().order_by('-order_time')   # Retrieve all orders

@@ -2,107 +2,151 @@
 
 {% block first %}
 <style>
+    /* Marquee Animation */
     @keyframes slide {
         0% { transform: translateX(-100%); }
         100% { transform: translateX(100%); }
     }
     .slide-animation {
-        animation: slide 15s linear infinite;
+        animation: slide 12s linear infinite;
     }
 </style>
+
 <!-- Room Availability Section -->
-<div class="container mx-auto p-4">
-    <div class="row">
-        <div class="col-lg-12 mb-4 p-8 rounded shadow-lg bg-blue-200 items-center justify-center">
-            <h4 class="text-center text-2xl font-semibold mb-6 text-gray-700">Check Room Availability</h4>
-            <form method="post" class="space-y-2">
-                {% csrf_token %}
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="mb-3">
-                        <label for="check_in" class="block text-gray-600 mb-2">Check-In Date</label>
-                        <input type="date" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" 
-                               name="check_in" id="check_in" value="{{ check_in }}">
-                    </div>
-                    <div class="mb-3">
-                        <label for="check_out" class="block text-gray-600 mb-2">Check-Out Date</label>
-                        <input type="date" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" 
-                               name="check_out" id="check_out" value="{{ check_out }}">
-                    </div>
-                    <div class="mb-3 flex items-end">
-                        <button type="submit" class="btn btn-primary w-1/2 bg-blue-500 text-white font-semibold py-2 rounded shadow hover:bg-blue-600 transition duration-200">Submit</button>
-                    </div>
+<div class="container mx-auto px-4 py-6">
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+        <h4 class="text-center text-2xl font-semibold text-gray-700 mb-4">Check Room Availability</h4>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Check-in Date -->
+                <div>
+                    <label for="check_in" class="block text-gray-600 text-sm font-medium mb-1">Check-In Date</label>
+                    <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 transition outline-none" name="check_in" id="check_in" value="{{ check_in }}">
                 </div>
-            </form>
-        </div>
+
+                <!-- Check-out Date -->
+                <div>
+                    <label for="check_out" class="block text-gray-600 text-sm font-medium mb-1">Check-Out Date</label>
+                    <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 transition outline-none" name="check_out" id="check_out" value="{{ check_out }}">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex items-end">
+                    <button type="submit" class="w-full md:w-auto px-6 py-2 bg-blue-600 text-white font-medium text-sm rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-<div class="overflow-hidden bg-yellow-300 py-2 w-1/2 mx-auto relative">
-    <div class="slide-animation whitespace-nowrap text-lg font-semibold text-gray-700">
-        Notice: Booking is available daily from 12:01 PM on the check-in date until 11:59 AM on the check out date.
+
+<!-- Scrolling Notice -->
+<div class="overflow-hidden bg-yellow-300 py-2 w-3/4 md:w-1/2 mx-auto rounded shadow-md">
+    <div class="slide-animation whitespace-nowrap text-md font-semibold text-gray-700">
+        🔔 Booking is available daily from **12:01 PM on check-in** until **11:59 AM on check-out date**.
     </div>
 </div>
 
 <!-- Guest Rooms Section -->
-<h2 class="mt-3 pt-5 mb-5 text-center font-bold text-3xl text-blue-900">Guest Rooms</h2>
+<h2 class="mt-6 text-center font-bold text-3xl text-blue-900">Our Guest Rooms</h2>
+<hr class="w-1/3 mx-auto mt-3 border-blue-400">
 
-<div class="container mx-auto mt-10">
+<div class="container mx-auto mt-5">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {% for room in room %}
-        <div class="flex flex-col">
-            <div class="bg-teal-500 rounded-lg shadow-md overflow-hidden" data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-in-sine" data-aos-delay="200">
-                <img src="{{ room.img.url }}" alt="Room Image" class="h-64 w-full object-cover">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Room No: {{ room.room }}</h3>
-                    <p class="text-gray-600 text-sm mb-4">{{ room.description }}</p>
+        <div class="transform transition duration-75 hover:scale-105 will-change-transform">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                
+                <!-- Room Image -->
+                <img src="{{ room.img.url }}" alt="Room Image" class="h-56 w-full object-cover hover:scale-105 transition-transform duration-75 ease-in-out" loading="lazy">
 
-                    <!-- Room Details -->
-                    <div class="flex justify-evenly items-center mb-2">
-                        <span class="text-sm bg-blue-200 text-blue-800 px-2 py-1 rounded-full"><i class="fa-solid fa-bangladeshi-taka-sign"></i>{{ room.price }}/day</span>
-                        <span class="text-sm bg-blue-200 text-blue-800 px-2 py-1 rounded-full">For {{ room.roomtype }}</span>
-                        <span class="text-sm bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Capacity {{ room.capacity }}</span>
+                <!-- Room Details -->
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 truncate">Room No: {{ room.room }}</h3>
+
+                    <!-- Room Type Badge -->
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <span class="bg-blue-600 text-white text-xs px-3 py-1 rounded-md font-semibold">
+                            {{ room.roomtype }}
+                        </span>
+                        <span class="text-xs text-blue-800 border border-blue-500 px-3 py-1 rounded-md">Best Choice</span>
                     </div>
 
-                    <!-- Booking Button -->
-                    <div class="flex justify-center mt-5 items-center">
-                        <a href="{% url 'Booking' room.room %}" class="bg-blue-600 hover:bg-violet-500 text-white px-4 py-2 rounded shadow-md">Book Now</a>
+                    <!-- Capacity & Status -->
+                    <p class="text-sm text-gray-700 mt-2">👥 Capacity: <span class="font-medium">{{ room.capacity }} persons</span></p>
+                    <p class="text-sm text-gray-700">🏨 Status: 
+                        <span class="font-medium {% if room.status == 'Available for booking' %} text-green-600 {% elif room.status == 'Not available currently' %} text-yellow-600 {% else %} text-red-600 {% endif %}">
+                            {{ room.status }}
+                        </span>
+                    </p>
+
+                    <!-- Price & Booking -->
+                    <div class="flex justify-between items-center mt-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">Price</p>
+                            <p class="text-xl font-bold">৳{{ room.price }} <span class="text-sm text-gray-500">/ night</span></p>
+                        </div>
+                        
+                        <!-- Booking Button -->
+                        {% if room.status == 'Available for booking' %}
+                        <a href="{% url 'Booking' room.room %}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow-md text-sm">
+                            Book Now
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center text-gray-600 col-span-full">No rooms available for the selected floor.</p>
         {% endfor %}
     </div>
 </div>
 
 <!-- Pagination Section -->
-<nav class="flex justify-center mt-5 mb-5" aria-label="...">
-    <ul class="pagination mt-3 inline-flex space-x-2">
+<nav class="flex justify-center mt-6 mb-6" aria-label="Pagination">
+    <ul class="pagination inline-flex space-x-2">
         {% if room.has_previous %}
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/room_list?page=1">First</a>
+        <li>
+            <a class="px-3 py-2 rounded shadow-md bg-blue-600 text-white hover:bg-teal-500 transition duration-300"
+               href="?page=1">First</a>
         </li>
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/room_list?page={{room.previous_page_number}}">Previous</a>
+        <li>
+            <a class="px-3 py-2 rounded shadow-md bg-blue-600 text-white hover:bg-teal-500 transition duration-300"
+               href="?page={{ room.previous_page_number }}">Previous</a>
         </li>
         {% endif %}
+
         {% for n in room.paginator.page_range %}
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/room_list?page={{ n }}">{{ n }}</a>
+        <li>
+            <a class="px-3 py-2 rounded shadow-md transition duration-300 
+                      {% if n == room.number %} bg-teal-500 text-white font-bold {% else %} bg-blue-600 text-white hover:bg-teal-500 {% endif %}"
+               href="?page={{ n }}">
+                {{ n }}
+            </a>
         </li>
         {% endfor %}
+
         {% if room.has_next %}
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/room_list?page={{room.next_page_number}}">Next</a>
+        <li>
+            <a class="px-3 py-2 rounded shadow-md bg-blue-600 text-white hover:bg-teal-500 transition duration-300"
+               href="?page={{ room.next_page_number }}">Next</a>
         </li>
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/room_list?page={{ room.paginator.num_pages }}">Last</a>
+        <li>
+            <a class="px-3 py-2 rounded shadow-md bg-blue-600 text-white hover:bg-teal-500 transition duration-300"
+               href="?page={{ room.paginator.num_pages }}">Last</a>
         </li>
         {% endif %}
     </ul>
 </nav>
+
+<!-- Initialize AOS -->
 <script>
-AOS.init();
-
+    AOS.init();
 </script>
-
 
 {% endblock %}

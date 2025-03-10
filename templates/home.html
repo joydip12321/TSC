@@ -1,20 +1,64 @@
-{% extends "navbar.html" %} 
+{% extends "navbar.html" %}
+
 {% block start %}
 
 <div class="relative h-screen overflow-hidden">
-    <!-- Full Background Image -->
-    <img src="/static/img/school.jpg" alt="A welcoming school environment" class="absolute inset-0 w-full h-full object-cover">
+    <!-- Full Background Image with Slightly Darker Overlay -->
+    <img src="/static/img/school.jpg" alt="A welcoming school environment" class="absolute inset-0 w-full h-full object-cover brightness-80">
 
-    <!-- Overlay for Text on the left half -->
-    <div class="absolute inset-y-0 left-0 w-1/2 flex items-center justify-start px-6 bg-stone-500 bg-opacity-60">
-        <div class="mt-24 text-left space-y-2"> <!-- Adjust margin-top for spacing -->
-            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-lime-400">Welcome to Teacher-Student Center</h1>
-            <p class="text-lg text-yellow-300 sm:text-xl">Create Your Account Here!</p>
-            <a href="{% url 'register' %}" class="font-mono inline-block px-6 py-2 bg-cyan-500 text-black font-semibold rounded-md hover:bg-cyan-600">
-                Create Account
+    <!-- Centered Overlay Box -->
+    <div class="absolute inset-0 flex items-center justify-center">
+        <div class="bg-gray-100 bg-opacity-90 p-8 rounded-lg shadow-xl max-w-lg text-center animate-fade-in">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-indigo-700">Welcome to Teacher-Student Center</h1>
+            <p class="text-lg text-gray-600 sm:text-xl mt-2">Empowering education, one step at a time.</p>
+            <a href="{% url 'register' %}" class="mt-4 inline-block px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-md">
+                Get Started
             </a>
         </div>
     </div>
 </div>
+
+<!-- Vice Chancellor Message Section -->
+<div class="container mx-auto px-6 py-12">
+    <div class="bg-white shadow-lg rounded-lg p-8 flex flex-col md:flex-row items-center md:items-start justify-between">
+        
+        <!-- Text Section -->
+        <div class="flex-1">
+            <h2 class="text-gray-800 text-lg font-semibold">MESSAGE FROM</h2>
+            <h3 class="text-2xl font-bold text-gray-900">VICE CHANCELLOR</h3>
+            <p class="text-gray-700 mt-4">
+                I am deeply honored to step into the vital role of Vice Chancellor at Jashore University of Science and Technology (JUST), Jashore, Bangladesh. As I begin this message, I would like to pay profound tribute to our revered martyrs and national heroes, whose sacrifices span from the Language Movement of 1952 to the Anti-Discrimination Student Movement of 2024. I also acknowledge the sacrifices of those who were injured in these movements and are now living in indescribably difficult conditions. Without their unconditional sacrifices, we would not have the freedom to speak in our mother tongue, Bangla, enjoy an independent and sovereign country, or have the opportunity to reclaim our democratic rights in this beloved nation.            </p>
+            <a href="https://just.edu.bd/vc/speech" class="mt-4 inline-flex items-center text-blue-600 font-semibold hover:text-blue-800 transition">
+                READ MORE <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+
+        <!-- Image Section (Properly Aligned) -->
+        <div class="w-36 h-36 md:w-44 md:h-44 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-300 flex-shrink-0 ml-6">
+            <img src="/static/img/vc.png" alt="Vice Chancellor" class="w-full h-full object-cover">
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Smooth fade-in animation */
+    .animate-fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 1s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 
 {% endblock %}
