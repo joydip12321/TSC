@@ -56,7 +56,7 @@ MIDDLEWARE = [
         # 'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this
 
 ]
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 ROOT_URLCONF = 'TSC_Website.urls'
@@ -77,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'TSC_Website.wsgi.application'
+WSGI_APPLICATION = 'TSC_Website.wsgi.application'
 
 
 # Database
@@ -130,7 +130,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Additional locations of static files
 STATICFILES_DIRS = [
