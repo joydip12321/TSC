@@ -4,29 +4,49 @@
 
 <div class="container mx-auto py-4">
     <h1 class="text-3xl font-bold text-center mb-3">Add New Menu Item</h1>
-  
-    
+
     <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg p-4">
         <form method="POST" enctype="multipart/form-data" class="space-y-6">
             {% csrf_token %}
 
+            <!-- Item Name -->
             <div class="mb-4">
-                <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500" placeholder="Enter Item Name">
+                <label class="block text-gray-700">Item Name</label>
+                {{ itemForm.name }}
             </div>
 
+            <!-- Item Price -->
             <div class="mb-4">
-                <input type="text" name="price" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500" placeholder="Enter Item Price">
+                <label class="block text-gray-700">Price</label>
+                {{ itemForm.price }}
             </div>
 
+            <!-- Item Description -->
             <div class="mb-4">
-                <textarea name="description" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500" placeholder="Enter Item Description"></textarea>
+                <label class="block text-gray-700">Description</label>
+                {{ itemForm.description }}
             </div>
 
+            <!-- Item Image -->
             <div class="mb-4">
-                <label for="image" class="block text-gray-700">Item Image</label>
-                <input type="file" name="image" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
+                <label class="block text-gray-700">Item Image</label>
+                {{ itemForm.image }}
             </div>
 
+            <!-- Meal Time Selection (Fixed) -->
+            <div class="mb-4">
+                <label class="block text-gray-700">Select Meal Time:</label>
+                <div class="flex flex-wrap space-x-4">
+                    {% for meal_time in itemForm.meal_times %}
+                        <label class="inline-flex items-center space-x-2">
+                            {{ meal_time.tag }}  <!-- ✅ This ensures proper checkbox rendering -->
+                            <span>{{ meal_time.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Submit Button -->
             <div>
                 <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Add Item
@@ -34,7 +54,6 @@
             </div>
         </form>
     </div>
-
 </div>
 
 {% endblock %}

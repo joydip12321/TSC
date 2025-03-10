@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this
+        # 'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this
 
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -122,7 +122,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-CSRF_TRUSTED_ORIGINS = ['https://web-production-4d68.up.railway.app']
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

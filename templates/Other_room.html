@@ -4,60 +4,96 @@
 
 <h2 class="mt-3 pt-5 mb-5 text-center font-bold text-3xl text-blue-900">Other Rooms</h2>
 
-<div class="container mx-auto mt-10">
+<div class="container mx-auto mt-5">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {% for room in room %}
-        <div class="flex flex-col">
-            <div class="bg-teal-500 rounded-lg shadow-md overflow-hidden" data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-in-sine" data-aos-delay="200">
-                <img src="{{ room.img.url }}" alt="Room Image" class="h-64 w-full object-cover">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Room No: {{ room.room }}</h3>
-                    <p class="text-gray-600 text-sm mb-4">{{ room.description }}</p>
+        <div class="transform transition duration-75 hover:scale-105 will-change-transform">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                
+                <!-- Room Image -->
+                <img src="{{ room.img.url }}" alt="Room Image" class="h-56 w-full object-cover hover:scale-105 transition-transform duration-75 ease-in-out" loading="lazy">
 
-                    <!-- Room Details -->
-                    <div class="flex justify-evenly items-center mb-2">
-                        <span class="text-sm bg-blue-200 text-blue-800 px-2 py-1 rounded-full"><i class="fa-solid fa-bangladeshi-taka-sign"></i>{{ room.price }}/day</span>
-                        <span class="text-sm bg-blue-200 text-blue-800 px-2 py-1 rounded-full">For {{ room.roomtype }}</span>
-                        <span class="text-sm bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Capacity {{ room.capacity }}</span>
+                <!-- Room Details -->
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 truncate">Room No: {{ room.room }}</h3>
+
+                    <!-- Room Type Badge -->
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <span class="bg-blue-600 text-white text-xs px-3 py-1 rounded-md font-semibold">
+                            {{ room.roomtype }}
+                        </span>
+                        <span class="text-xs text-blue-800 border border-blue-500 px-3 py-1 rounded-md">Best Choice</span>
                     </div>
 
-                    <!-- Booking Button -->
-                    <div class="flex justify-center mt-5 items-center">
-                        <a href="{% url 'Booking' room.room %}" class="bg-blue-600 hover:bg-violet-500 text-white px-4 py-2 rounded shadow-md">Book Now</a>
+                    <!-- Capacity & Status -->
+                    <p class="text-sm text-gray-700 mt-2">👥 Capacity: <span class="font-medium">{{ room.capacity }} persons</span></p>
+                    <p class="text-sm text-gray-700">🏨 Status: 
+                        <span class="font-medium {% if room.status == 'Available for booking' %} text-green-600 {% elif room.status == 'Not available currently' %} text-yellow-600 {% else %} text-red-600 {% endif %}">
+                            {{ room.status }}
+                        </span>
+                    </p>
+                    <!-- Price & Booking -->
+                    <div class="flex justify-between items-center mt-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">Price</p>
+                            <p class="text-xl font-bold">৳{{ room.price }} <span class="text-sm text-gray-500">/ night</span></p>
+                        </div>
+        
                     </div>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center text-gray-600 col-span-full">No rooms available for the selected floor.</p>
         {% endfor %}
     </div>
 </div>
 
 <!-- Pagination -->
-<nav class="flex justify-center mt-5 mb-5" aria-label="...">
+<nav class="flex justify-center mt-5 mb-5" aria-label="Pagination">
     <ul class="pagination mt-3 inline-flex space-x-2">
         {% if room.has_previous %}
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/other_room?page=1">First</a>
+        <li>
+            <a href="/other_room?page=1" 
+               class="px-2 py-1 rounded shadow-md bg-blue-600 text-white hover:bg-teal-500 transition duration-300">
+                First
+            </a>
         </li>
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/other_room?page={{room.previous_page_number}}">Previous</a>
+        <li>
+            <a href="/other_room?page={{ room.previous_page_number }}" 
+               class="px-2 py-1 rounded shadow-md bg-blue-600 text-white hover:bg-teal-500 transition duration-300">
+                Previous
+            </a>
         </li>
         {% endif %}
+
         {% for n in room.paginator.page_range %}
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/other_room?page={{ n }}">{{ n }}</a>
+        <li>
+            <a href="/other_room?page={{ n }}" 
+               class="px-2 py-1 rounded shadow-md transition duration-300 
+                      {% if n == room.number %} bg-teal-500 text-white font-bold {% else %} bg-blue-600 text-white hover:bg-teal-500 {% endif %}">
+                {{ n }}
+            </a>
         </li>
         {% endfor %}
+
         {% if room.has_next %}
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/other_room?page={{room.next_page_number}}">Next</a>
+        <li>
+            <a href="/other_room?page={{ room.next_page_number }}" 
+               class="px-2 py-1 rounded shadow-md bg-blue-600 text-white hover:bg-teal-500 transition duration-300">
+                Next
+            </a>
         </li>
-        <li class="bg-blue-600 hover:bg-teal-500 text-white px-4 py-2 rounded shadow-md">
-            <a class="page-link" href="/other_room?page={{ room.paginator.num_pages }}">Last</a>
+        <li>
+            <a href="/other_room?page={{ room.paginator.num_pages }}" 
+               class="px-2 py-1 rounded shadow-md bg-blue-600 text-white hover:bg-teal-500 transition duration-300">
+                Last
+            </a>
         </li>
         {% endif %}
     </ul>
 </nav>
+
 <script>
     AOS.init();
 

@@ -46,19 +46,16 @@
                         <div class="relative">
                             <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                             <div class="relative">
-                                <input id="password" name="password" type="password" autocomplete="new-password" required value="{{ user_form.password.value|default:'' }}"
-                                       class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm transition duration-150 ease-in-out">
-                                <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"></span>
+                                <input id="password" name="password" type="password" autocomplete="new-password" required
+                                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                                <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-0 right-3 flex items-center cursor-pointer"></span>
                             </div>
+    
                             <small class="text-gray-600">
                                 Password must include:
-                                <ul class="list-disc list-inside pl-5">
-                                    <li>At least 8 characters</li>
-                                    <li>An uppercase letter</li>
-                                    <li>A lowercase letter</li>
-                                    <li>A digit</li>
-                                    <li>A special character (e.g., !@#$%^&*)</li>
-                                </ul>
+                               
+                                   <p>At least 8 characters, An uppercase letter,A lowercase letter, A digit, A special character (e.g., !@#$%^&*) </p>
+                    
                             </small>
                         </div>
                         <div class="relative">

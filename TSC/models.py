@@ -84,14 +84,28 @@ class Booking(models.Model):
     def __str__(self):
         return self.room.room
 
-class MenuItem(models.Model):
-    name = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
-    image = models.ImageField(upload_to='img/')
-    description=models.CharField(max_length=40)
+from django.db import models
+
+class MealTime(models.Model):  
+    """Stores meal times like Breakfast, Lunch, and Dinner."""
+    name = models.CharField(max_length=20, unique=True)  # ✅ Removed choices (so it's dynamic)
 
     def __str__(self):
         return self.name
+
+
+class MenuItem(models.Model):
+    """Stores menu items with multiple meal time options."""
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=6, decimal_places=2)  # ✅ Increased max_digits for safety
+    image = models.ImageField(upload_to='menu_images/')  # ✅ Changed folder for better organization
+    description = models.CharField(max_length=255)  # ✅ Increased description length
+    meal_times = models.ManyToManyField(MealTime, related_name="menu_items")  # ✅ Allows multiple meal times
+
+    def __str__(self):
+        return f"{self.name} ({', '.join(meal.name for meal in self.meal_times.all())})"
+
+
 
 class Orders(models.Model):
     STATUS =(

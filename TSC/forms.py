@@ -91,9 +91,16 @@ class UserProfileForm(forms.ModelForm):
                 raise forms.ValidationError("All teacher fields are required for teachers.")
 
 class ItemForm(forms.ModelForm):
+    meal_times = forms.ModelMultipleChoiceField(
+        queryset=MealTime.objects.all(),
+        widget=forms.CheckboxSelectMultiple,  # ✅ Show checkboxes
+        required=True
+    )
+
     class Meta:
-        model=MenuItem
-        fields=['name','price','description','image']
+        model = MenuItem
+        fields = ['name', 'price', 'description', 'image', 'meal_times']
+
 
 class RoomForm(forms.ModelForm):
     class Meta:

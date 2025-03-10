@@ -1,50 +1,85 @@
-{% extends "image.html" %} 
+{% extends "image.html" %}
 {% block first %}
 
 <section class="food_section layout_padding-bottom py-10">
     <div class="container mx-auto px-4">
+        <!-- Heading -->
         <div class="heading_container heading_center mb-8">
             <h2 class="text-3xl font-bold text-gray-800 text-center">
                 Our Menu
             </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <!-- Meal Time Filter Form -->
+        <form method="GET" class="mb-6 text-center">
+            <label class="text-lg font-semibold text-gray-700">Filter by Meal Time:</label>
+            <div class="inline-flex space-x-4">
+                {% for meal_time in meal_times %}
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="meal_time" value="{{ meal_time.name }}" 
+                            {% if meal_time.name in selected_meal_times %}checked{% endif %}
+                            class="form-checkbox text-indigo-600">
+                        <span class="ml-2 text-gray-800">{{ meal_time.name }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            <button type="submit" class="ml-4 bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                 Filter
+            </button>
+        </form>
+
+        <!-- Menu Items Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {% for item in item %}
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden"  data-aos="fade-up" 
-            data-aos-duration="800" 
-            data-aos-easing="ease-in-sine" 
-            data-aos-delay="200" 
-            data-aos-offset="50" 
-            data-aos-once="false">
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105" data-aos="fade-up" 
+                data-aos-duration="800" 
+                data-aos-easing="ease-in-sine" 
+                data-aos-delay="200" 
+                data-aos-offset="50" 
+                data-aos-once="false">
+                
+                <!-- Image -->
                 <div class="img-box transition-transform duration-300 ease-in-out">
-                    <img class="transform transition-all hover:scale-110 w-full h-48 object-cover" src="{{ item.image.url }}" alt="{{ item.name }}">
+                    <img class="w-full h-44 object-cover rounded-t-lg" src="{{ item.image.url }}" alt="{{ item.name }}">
                 </div>
-                <div class="p-6">
-                    <h5 class="text-xl font-semibold text-gray-800 mb-2">
-                        {{ item.name }}
-                    </h5>
-                    <p class="text-gray-600 mb-4">
-                        {{ item.description }}
-                    </p>
-                    <p class="text-lg font-bold text-gray-900">
-                        <i class="fa-solid fa-bangladeshi-taka-sign"></i> {{ item.price }}
-                    </p>
-                    <form method="POST" action="{% url 'add_to_cart' item.pk %}" class="mt-4">
+
+                <!-- Item Info -->
+                <div class="p-5 flex flex-col justify-between h-56">
+                    <div>
+                        <h5 class="text-lg font-semibold text-gray-900 mb-1">{{ item.name }}</h5>
+                        <p class="text-gray-600 text-sm mb-2">{{ item.description }}</p>
+                        <p class="text-md font-bold text-indigo-600">
+                            <i class="fa-solid fa-bangladeshi-taka-sign"></i> {{ item.price }}
+                        </p>
+
+                        <!-- Meal Time Badges -->
+                        <div class="mb-3">
+                            {% for meal_time in item.meal_times.all %}
+                                <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs">{{ meal_time.name }}</span>
+                            {% empty %}
+                                <span class="text-gray-500 text-xs">No meal time assigned</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <form method="POST" action="{% url 'add_to_cart' item.pk %}" class="mt-auto">
                         {% csrf_token %}
-                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            Add to Cart
+                        <button type="submit" class="w-full bg-indigo-500 text-white font-semibold py-2 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition-all duration-300 shadow-md">
+                            + Add to Cart
                         </button>
                     </form>
                 </div>
             </div>
+            {% empty %}
+            <p class="text-center text-gray-600">No items found for the selected meal time.</p>
             {% endfor %}
         </div>
     </div>
 </section>
+
 <script>
     AOS.init();
-
 </script>
 
 {% endblock %}

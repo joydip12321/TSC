@@ -12,12 +12,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
 
     <style>
-        /* Custom styles to ensure the menu displays over the image */
+  .active {
+    background-color: #1f2937; /* Dark Gray */
+    color: white !important;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-weight: bold;
+}
+.nav-link {
+        font-size: 1rem; /* Between sm and xl */
+        text-transform: capitalize; /* Makes text look like CamelCase */
+        padding: 8px 14px;
+        font-weight: 600;
+    }
         #Mymenu {
             z-index: 10; /* Higher z-index to ensure the menu is above the image */
         }
         .menu-visible {
-            background-color: rgba(98, 135, 160, 0.8); /* Semi-transparent background */
+            background-color: rgba(231, 235, 238, 0.8); /* Semi-transparent background */
         }
          /* Ensure the page takes the full height of the viewport */
          html, body {
@@ -47,19 +59,19 @@
 
     
 
-<div class="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 fixed  w-full top-0 sm:top-0 z-50">
-    <nav class="p-2 shadow md:flex md:items-center md:justify-between">
+<div class="bg-white fixed w-full top-0 sm:top-0 z-50 shadow-md">
+    <nav class="p-1 shadow md:flex md:items-center md:justify-between">
         <div class="flex justify-between items-center">
             <div class="inline-flex items-center cursor-pointer">
-                <div class="w-14 h-14 p-1">
+                <div class="w-14 h-14 ">
                     <img src="/static/img/JUST_logo.png" alt="JUST Logo" class="w-full h-full object-contain">
                 </div>
                 <div class="ml-2">
-                    <h1 class="text-2xl font-[Poppins]">JUST TSC</h1>
+                    <h1 class="text-2sm font-[Poppins]">JUST TSC</h1>
                 </div>
             </div>
         
-            <span class="text-3xl cursor-pointer mx-2 md:hidden block">
+            <span class="text-3sm cursor-pointer mx-2 md:hidden block">
                 <ion-icon name="menu" onclick="Menu(this)"></ion-icon>
             </span>
         </div>
@@ -68,102 +80,104 @@
             <ul id="Mymenu"  class=" md:flex text-black font-mono font-bold md:items-center z-[-1] md:z-auto md:static absolute w-full left-0 md:w-auto md:py-0 py-4 md:pl-0 pl-7 md:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500">
                 {% if user.is_authenticated and user.is_staff %}
                 <li class="mx-2 my-6 md:my-0 " >
-                    <a href="{% url 'AddNotice' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">AddNotice</a>
+                    <a href="{% url 'AddNotice' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">AddNotice</a>
                 </li>
                 <li class="mx-2 my-6 md:my-0 " >
 
-                <a href="{% url 'adminRoom' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Room</a>
+                <a href="{% url 'adminRoom' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">Room</a>
                 </li>
                 <li class="mx-2 my-6 md:my-0 " >
-                    <a href="{% url 'Booking_list' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Booking</a>
+                    <a href="{% url 'Booking_list' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">Booking</a>
                     </li>
                     <li class="mx-2 my-6 md:my-0 " >
-                        <a href="{% url 'adminItem' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Item</a>
+                        <a href="{% url 'adminItem' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">Item</a>
                     </li>
                     <li class="mx-2 my-6 md:my-0 " >
-                        <a href="{% url 'admin_order' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">Orders</a>
+                        <a href="{% url 'admin_order' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">Orders</a>
                     </li>
                     <li class="mx-2 my-6 md:my-0 " >
-                        <a href="{% url 'AdminLogout' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">AdminLogout</a>
+                        <a href="{% url 'AdminLogout' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">AdminLogout</a>
                     </li>
                     
                         
                 {% else %}
                 <li class="mx-2 my-6 md:my-0 " >
-                    <a href="{% url 'home' %}" class="text-xl hover:sm:text-white hover:hover:text-pink-50 duration-500">HOME</a>
+                    <a href="{% url 'home' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">HOME</a>
+                </li>
+                <li class="mx-2 my-6 md:my-0 " >
+                    <a href="{% url 'notice' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">NOTICE</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="relative group mx-2 my-6 md:my-0">
-                    <a href="{% url 'my_notifications' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
-                        <i class="fas fa-bell text-lg"></i> <!-- Notification icon -->
+                    <a href="{% url 'my_notifications' %}" class="text-sm hover:sm:text-white hover:text-white duration-500 flex items-center">
+                        <i class="fas fa-bell "></i> <!-- Notification icon -->
                         <span class="unread-count ml-1 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-xs" style="display: none;">0</span>
                     </a>
                 </li>
             {% endif %}
-                <li class="mx-2 my-6 md:my-0">
-                    
-                    <a href="{% url 'notice' %}" class="text-xl hover:sm:text-white hover:text-pink-50 duration-500">NOTICES</a>
-                </li>
-              
-                <li class="relative group mx-2 my-6 md:my-0">
-                    <a href="{% url 'all_room' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
-                        ROOMS
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </a>
+            <li class="relative mx-2 my-6 md:my-0">
+                <!-- Room Button (Click to Toggle Dropdown) -->
+                <button id="room-toggle" class="text-sm hover:text-gray-700 duration-500 flex items-center focus:outline-none">
+                    ROOMS
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+            
+                <!-- Dropdown Menu -->
+                <ul id="room-dropdown" class="absolute hidden bg-white shadow-md py-2 w-auto text-gray-800 text-xs z-50 rounded-md border border-gray-300">
+                    <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+                        <a href="{% url 'all_room' %}" class="block whitespace-nowrap">All Rooms</a>
+                    </li>
+                    <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+                        <a href="{% url 'room_list' %}" class="block whitespace-nowrap">Guest Room</a>
+                    </li>
+                    <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+                        <a href="{% url 'event_room' %}" class="block whitespace-nowrap">Event Spaces</a>
+                    </li>
+                    <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+                        <a href="{% url 'club_room' %}" class="block whitespace-nowrap">Club Society</a>
+                    </li>
+                    <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+                        <a href="{% url 'office_room' %}" class="block whitespace-nowrap">Office Room</a>
+                    </li>
+                    <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+                        <a href="{% url 'other_room' %}" class="block whitespace-nowrap">Others</a>
+                    </li>
+                    <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+                        <a href="{% url 'user_booking_list' %}" class="block whitespace-nowrap">My Booking</a>
+                    </li>
+                </ul>
+            </li>
                 
-                    <!-- Dropdown -->
-                    <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md">
-                        <!-- Dropdown Item 1 -->
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'room_list' %}" class="block whitespace-nowrap">Guest Room</a>
-                        </li>
-                        <!-- Dropdown Item 2 -->
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'event_room' %}" class="block whitespace-nowrap">Event Spaces</a>
-                        </li>
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'club_room' %}" class="block whitespace-nowrap">Club Society</a>
-                        </li>
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'office_room' %}" class="block whitespace-nowrap">Office Room</a>
-                        </li>
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'other_room' %}" class="block whitespace-nowrap">Others</a>
-                        </li>
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'user_booking_list' %}" class="block whitespace-nowrap">My Booking</a>
-                        </li>
-                    </ul>
-                </li>
+<!-- Dropdown -->
+
+
+
                 
-                <li class="relative group mx-2 my-6 md:my-0">
-                    <a href="{% url 'dinning' %}" class="text-xl hover:text-white duration-500 flex items-center">
-                        DINING
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </a>
-                
-                    <!-- Dropdown -->
-                    <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md">
-                        <!-- Dropdown Item 1 -->
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'item' %}" class="block whitespace-nowrap">Our Menu</a>
-                        </li>
-                        <!-- Dropdown Item 2 -->
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'custom_order' %}" class="block whitespace-nowrap">Custom Order</a>
-                        </li>
-                        <!-- Dropdown Item 3 -->
-                        <li class="px-4 py-2 hover:bg-blue-700">
-                            <a href="{% url 'my_orders' %}" class="block whitespace-nowrap">My Orders</a>
-                        </li>
-                    </ul>
-                </li>
-                
-                
+<li class="relative mx-2 my-6 md:my-0">
+    <!-- Dining Button (Click to Toggle Dropdown) -->
+    <button id="dining-toggle" class="text-sm hover:text-gray-700 duration-500 flex items-center focus:outline-none">
+        DINING
+        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </button>
+
+    <!-- Dropdown Menu -->
+    <ul id="dining-dropdown" class="absolute hidden bg-white shadow-md py-2 w-auto text-gray-800 text-xs z-50 rounded-md border border-gray-300">
+        <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+            <a href="{% url 'item' %}" class="block whitespace-nowrap">Our Menu</a>
+        </li>
+        <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+            <a href="{% url 'custom_order' %}" class="block whitespace-nowrap">Custom Order</a>
+        </li>
+        <li class="px-3 py-1 hover:bg-gray-300 hover:text-gray-900 rounded-sm">
+            <a href="{% url 'my_orders' %}" class="block whitespace-nowrap">My Orders</a>
+        </li>
+    </ul>
+</li>
+           
             
 
 
@@ -171,7 +185,7 @@
             
                 <li class="relative group mx-2 my-6 md:my-0">
                     <!-- Cart Icon with SVG -->
-                    <a href="{% url 'view_cart' %}" class="text-xl hover:sm:text-white hover:text-white duration-500 flex items-center">
+                    <a href="{% url 'view_cart' %}" class="text-sm hover:sm:text-white hover:text-white duration-500 flex items-center">
                         <i class="fa-solid fa-cart-shopping"></i>
                         
                         <!-- Cart Item Count in Brackets -->
@@ -183,43 +197,29 @@
                     </a>
                 </li>
                 {%endif%}
+                <div class="relative ml-auto">
+                    <!-- User Icon -->
+                    <i id="user-icon" class="fa-solid fa-user text-sm cursor-pointer p-2"></i>
                 
-                
-<!--                 
-                <li class="mx-2 my-6 md:my-0">
-                    <a href="#" class="text-xl hover:sm:text-white hover:text-pink-50 duration-500">AboutUS</a>
-                </li>
-                -->
-                <li class="relative group mx-2 my-6 md:my-0">
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="text-xl hover:text-white duration-500 flex items-center">
-                        Logout
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </a>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="text-xl hover:text-white duration-500 flex items-center">
-                        Login
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </a>
-                    {% endif %}
-                    
-                    <!-- Dropdown -->
-                    <ul class="absolute hidden group-hover:block bg-green-600 shadow-lg py-2 w-auto text-black z-50 rounded-md" style="left: -10px;">
-                        {% if not user.is_authenticated %}
-                        <li class="px-4 py-2 hover:bg-blue-700">
+                    <!-- Dropdown Menu -->
+                    <ul id="user-menu" class="absolute right-0 hidden bg-white shadow-lg rounded-md py-2 w-40 text-black z-50 border">
+                        {% if user.is_authenticated %}
+                        <li class="px-4 py-2 hover:bg-gray-200">
+                            <a href="{% url 'logout' %}" class="block whitespace-nowrap">Logout</a>
+                        </li>
+                        {% else %}
+                        <li class="px-4 py-2 hover:bg-gray-200">
+                            <a href="{% url 'login' %}" class="block whitespace-nowrap">Login</a>
+                        </li>
+                        <li class="px-4 py-2 hover:bg-gray-200">
                             <a href="{% url 'register' %}" class="block whitespace-nowrap">Register</a>
                         </li>
                         {% endif %}
-                        
-                        <li class="px-4 py-2 hover:bg-blue-700">
+                        <li class="px-4 py-2 hover:bg-gray-200">
                             <a href="{% url 'AdminLogin' %}" class="block whitespace-nowrap">Admin</a>
                         </li>
                     </ul>
-                </li>
+                </div>
                 
                 {% endif %}
             </ul>
@@ -284,6 +284,50 @@
     </div>
 </footer>
     <script>
+            document.addEventListener("DOMContentLoaded", function () {
+        const diningToggle = document.getElementById("dining-toggle");
+        const diningDropdown = document.getElementById("dining-dropdown");
+
+        diningToggle.addEventListener("click", function (event) {
+            event.stopPropagation();
+            diningDropdown.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!diningToggle.contains(event.target) && !diningDropdown.contains(event.target)) {
+                diningDropdown.classList.add("hidden");
+            }
+        });
+    });
+    
+            document.addEventListener("DOMContentLoaded", function () {
+        const roomToggle = document.getElementById("room-toggle");
+        const roomDropdown = document.getElementById("room-dropdown");
+
+        roomToggle.addEventListener("click", function (event) {
+            event.stopPropagation();
+            roomDropdown.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!roomToggle.contains(event.target) && !roomDropdown.contains(event.target)) {
+                roomDropdown.classList.add("hidden");
+            }
+        });
+    });
+          document.addEventListener("DOMContentLoaded", function () {
+        // Get all nav links
+        let navLinks = document.querySelectorAll("nav ul li a");
+
+        // Get the current URL
+        let currentUrl = window.location.href;
+
+        navLinks.forEach(link => {
+            if (link.href === currentUrl) {
+                link.classList.add("active");
+            }
+        });
+    });
         function Menu(e) {
             let list = document.querySelector('#Mymenu');
             if (e.name === 'menu') {
@@ -308,6 +352,23 @@
                 }
             });
     }
+    document.addEventListener("DOMContentLoaded", function () {
+        const userIcon = document.getElementById("user-icon");
+        const userMenu = document.getElementById("user-menu");
+
+        // Toggle dropdown menu on user icon click
+        userIcon.addEventListener("click", function (event) {
+            event.stopPropagation();
+            userMenu.classList.toggle("hidden");
+        });
+
+        // Hide dropdown menu when clicking outside
+        document.addEventListener("click", function (event) {
+            if (!userIcon.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.classList.add("hidden");
+            }
+        });
+    });
 
     // Call updateUnreadCount every 10 seconds
     setInterval(updateUnreadCount, 10000);

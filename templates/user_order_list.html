@@ -1,37 +1,44 @@
 {% extends "image.html" %}
 
 {% block first %}
-<div class="container mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold text-center text-green-600 mb-8">My Orders</h2>
-    <div class="grid grid-cols-1 gap-6">
-        {% for order in orders %}
-            <div class="flex flex-col md:flex-row bg-gray-100 rounded-lg shadow-md p-4 transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                <div class="flex-1 mb-2 md:mb-0 md:mr-4">
-                    <h3 class="text-lg font-semibold text-blue-600 mb-1">{{ order.items_summary }}</h3>
-                    <p class="text-gray-700"><strong>Location:</strong> {{ order.location }}</p>
-                    <p class="text-gray-700">
-                        <strong>Status:</strong> 
-                        <span class="{% if order.status == 'Pending' %}text-red-500{% elif order.status == 'Order Confirmed' %}text-green-500{% else %}text-blue-500{% endif %}">
+<div class="container mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold text-center text-green-600 mb-8">My Orders</h2>
+
+    {% if orders %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for order in orders %}
+                <div class="bg-gray-50 rounded-lg shadow-md p-6 transition-transform duration-300 hover:scale-105 hover:shadow-xl border border-gray-200">
+                    
+                    <!-- Order Summary -->
+                    <h3 class="text-lg font-semibold text-blue-700 mb-2 flex items-center">
+                        <i class="fa-solid fa-utensils mr-2 text-gray-600"></i> {{ order.items_summary }}
+                    </h3>
+
+                    <!-- Order Details -->
+                    <p class="text-gray-700"><strong>📍 Location:</strong> {{ order.location }}</p>
+                    <p class="text-gray-700"><strong>🕒 Delivery Time:</strong> {{ order.order_time }}</p>
+                    
+                    <!-- Status Badge -->
+                    <p class="mt-2 text-gray-700 flex items-center">
+                        <strong class="mr-2">📌 Status:</strong> 
+                        <span class="px-3 py-1 rounded-full text-white text-sm font-semibold
+                            {% if order.status == 'Pending' %} bg-red-500
+                            {% elif order.status == 'Order Confirmed' %} bg-green-500
+                            {% else %} bg-blue-500 {% endif %}">
                             {{ order.status }}
                         </span>
-                    </p>                </div>
-                <div flex-1 mb-2 md:mb-0 md:mr-4>
-                <div class="flex-none mb-2 md:mb-0 md:mr-4">
-                    <p class="text-gray-700"><strong>Quantity:</strong> {{ order.quantity }}</p>
-                </div>
+                    </p>
 
-                <div class="flex-none">
-                    <p class="text-gray-700"><strong>Total Price:</strong> <i class="fa-solid fa-bangladeshi-taka-sign"></i>{{ order.price }}</p>
+                    <!-- Quantity & Price -->
+                    <div class="mt-4 flex justify-between items-center">
+                        <p class="text-gray-700"><strong>📦 Quantity:</strong> {{ order.quantity }}</p>
+                        <p class="text-gray-700"><strong>💰 Total:</strong> <i class="fa-solid fa-bangladeshi-taka-sign"></i> {{ order.price }}</p>
+                    </div>
                 </div>
-                <div class="">
-                    <p class="text-gray-700"><strong>Delivery Time: </strong> {{ order.order_time }}</p>
-                </div>
-            </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-500 text-lg">You have no orders yet.</p>
+    {% endif %}
 </div>
-
-
-
 {% endblock %}

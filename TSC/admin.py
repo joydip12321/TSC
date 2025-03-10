@@ -5,9 +5,11 @@ admin.site.register(UserProfile)
 admin.site.register(Notice)
 admin.site.register(Room_Type)
 admin.site.register(Room)
+admin.site.register(MealTime)
 admin.site.register(MenuItem)
 admin.site.register(Orders)
 admin.site.register(Booking)
+
 
 
 
