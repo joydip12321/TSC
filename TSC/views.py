@@ -281,7 +281,7 @@ def AllRoom(request):
         room = Room.objects.all().order_by('-id')
 
     # Paginate the results, 6 rooms per page
-    paginator = Paginator(room, 6)
+    paginator = Paginator(room, 12)
     page_no = request.GET.get('page')  # Get the current page number
     try:
         room = paginator.page(page_no)
