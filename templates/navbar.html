@@ -202,16 +202,16 @@
                     <i id="user-icon" class="fa-solid fa-user text-sm cursor-pointer p-2"></i>
                 
                     <!-- Dropdown Menu -->
-                    <ul id="user-menu" class="absolute right-0 hidden bg-white shadow-lg rounded-md py-2 w-40 text-black z-50 border">
+                    <ul id="user-menu" class="absolute right-0  text-sm hidden bg-white shadow-lg rounded-md py-2 w-40 text-black z-50 border">
                         {% if user.is_authenticated %}
-                        <li class="px-4 py-2 hover:bg-gray-200">
-                            <a href="{% url 'logout' %}" class="block whitespace-nowrap">Logout</a>
+                        <li class="px-3 py-1 hover:bg-gray-200">
+                            <a href="{% url 'logout' %}" class="block whitespace-nowrap">Sign Out</a>
                         </li>
                         {% else %}
-                        <li class="px-4 py-2 hover:bg-gray-200">
-                            <a href="{% url 'login' %}" class="block whitespace-nowrap">Login</a>
+                        <li class="px-3 py-1 hover:bg-gray-200">
+                            <a href="{% url 'login' %}" class="block whitespace-nowrap">Sign in</a>
                         </li>
-                        <li class="px-4 py-2 hover:bg-gray-200">
+                        <li class="px-3 py-1 hover:bg-gray-200">
                             <a href="{% url 'register' %}" class="block whitespace-nowrap">Register</a>
                         </li>
                         {% endif %}
@@ -255,7 +255,7 @@
                     <li><a href="{% url 'notice' %}" class="hover:text-cyan-500">Notices</a></li>
                     <li><a href="{% url 'room_list' %}" class="hover:text-cyan-500">Booking</a></li>
                     <li><a href="{% url 'item' %}" class="hover:text-cyan-500">Dinning</a></li>
-                    <li><a href="#" class="hover:text-cyan-500">About Us</a></li>
+                    <li><a href="{% url 'view_cart' %}" class="hover:text-cyan-500">Cart</a></li>
                 </ul>
             </div>
 
@@ -283,51 +283,71 @@
         </div>
     </div>
 </footer>
-    <script>
-            document.addEventListener("DOMContentLoaded", function () {
-        const diningToggle = document.getElementById("dining-toggle");
-        const diningDropdown = document.getElementById("dining-dropdown");
-
-        diningToggle.addEventListener("click", function (event) {
-            event.stopPropagation();
-            diningDropdown.classList.toggle("hidden");
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!diningToggle.contains(event.target) && !diningDropdown.contains(event.target)) {
-                diningDropdown.classList.add("hidden");
-            }
-        });
-    });
-    
-            document.addEventListener("DOMContentLoaded", function () {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Room Dropdown Logic
         const roomToggle = document.getElementById("room-toggle");
         const roomDropdown = document.getElementById("room-dropdown");
+        const diningToggle = document.getElementById("dining-toggle");
+        const diningDropdown = document.getElementById("dining-dropdown");
+        const userIcon = document.getElementById("user-icon");
+        const userMenu = document.getElementById("user-menu");
 
+        // Toggle Room Dropdown
         roomToggle.addEventListener("click", function (event) {
             event.stopPropagation();
+            
+            // Close dining dropdown if it's open
+            if (!diningDropdown.classList.contains("hidden")) {
+                diningDropdown.classList.add("hidden");
+            }
+
+            // Toggle room dropdown visibility
             roomDropdown.classList.toggle("hidden");
         });
 
+        // Toggle Dining Dropdown
+        diningToggle.addEventListener("click", function (event) {
+            event.stopPropagation();
+            
+            // Close room dropdown if it's open
+            if (!roomDropdown.classList.contains("hidden")) {
+                roomDropdown.classList.add("hidden");
+            }
+
+            // Toggle dining dropdown visibility
+            diningDropdown.classList.toggle("hidden");
+        });
+
+        // Close dropdowns if clicked outside
         document.addEventListener("click", function (event) {
             if (!roomToggle.contains(event.target) && !roomDropdown.contains(event.target)) {
                 roomDropdown.classList.add("hidden");
             }
+            if (!diningToggle.contains(event.target) && !diningDropdown.contains(event.target)) {
+                diningDropdown.classList.add("hidden");
+            }
+            if (!userIcon.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.classList.add("hidden");
+            }
         });
-    });
-          document.addEventListener("DOMContentLoaded", function () {
-        // Get all nav links
+
+        // Toggle User Menu on User Icon Click
+        userIcon.addEventListener("click", function (event) {
+            event.stopPropagation();
+            userMenu.classList.toggle("hidden");
+        });
+
+        // Set Active Class for Nav Links
         let navLinks = document.querySelectorAll("nav ul li a");
-
-        // Get the current URL
         let currentUrl = window.location.href;
-
         navLinks.forEach(link => {
             if (link.href === currentUrl) {
                 link.classList.add("active");
             }
         });
-    });
+
+        // Menu Visibility Toggle
         function Menu(e) {
             let list = document.querySelector('#Mymenu');
             if (e.name === 'menu') {
@@ -339,43 +359,28 @@
             }
         }
 
-    function updateUnreadCount() {
-        fetch("{% url 'get_unread_notification_count' %}")
-            .then(response => response.json())
-            .then(data => {
-                const countElement = document.querySelector('.unread-count');
-                if (data.unread_count > 0) {
-                    countElement.innerText = data.unread_count;
-                    countElement.style.display = 'inline'; // Show the count
-                } else {
-                    countElement.style.display = 'none'; // Hide the count
-                }
-            });
-    }
-    document.addEventListener("DOMContentLoaded", function () {
-        const userIcon = document.getElementById("user-icon");
-        const userMenu = document.getElementById("user-menu");
+        // Update Unread Notification Count
+        function updateUnreadCount() {
+            fetch("{% url 'get_unread_notification_count' %}")
+                .then(response => response.json())
+                .then(data => {
+                    const countElement = document.querySelector('.unread-count');
+                    if (data.unread_count > 0) {
+                        countElement.innerText = data.unread_count;
+                        countElement.style.display = 'inline'; // Show the count
+                    } else {
+                        countElement.style.display = 'none'; // Hide the count
+                    }
+                });
+        }
 
-        // Toggle dropdown menu on user icon click
-        userIcon.addEventListener("click", function (event) {
-            event.stopPropagation();
-            userMenu.classList.toggle("hidden");
-        });
-
-        // Hide dropdown menu when clicking outside
-        document.addEventListener("click", function (event) {
-            if (!userIcon.contains(event.target) && !userMenu.contains(event.target)) {
-                userMenu.classList.add("hidden");
-            }
-        });
+        // Call updateUnreadCount every 10 seconds
+        setInterval(updateUnreadCount, 10000);
+        // Call once on page load
+        updateUnreadCount();
     });
+</script>
 
-    // Call updateUnreadCount every 10 seconds
-    setInterval(updateUnreadCount, 10000);
-    // Call once on page load
-    updateUnreadCount();
-
-    </script>
 </body>
 
 </html>

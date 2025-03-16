@@ -15,6 +15,7 @@ import re,json
 from django.contrib.auth.views import LoginView,LogoutView
 from .forms import *
 from datetime import datetime,timedelta
+from django.utils.timezone import now
 from functools import wraps
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
@@ -146,19 +147,35 @@ def Home(request):
 
 @user_passes_test(is_admin, login_url='/')
 def AddNotice(request):
+    notice_id = request.POST.get("notice_id")  # Check if we are updating an existing notice
+    notices = Notice.objects.all().order_by('-uploaded_at')  # Fetch all notices
+
     if request.method == "POST":
         title = request.POST.get("title")
         pdf = request.FILES.get("pdf")
-         
-        if title and pdf:
-            uploaded_at = datetime.now().date()
-            Notice.objects.create(
-                title=title,
-                pdf=pdf,
-                uploaded_at=uploaded_at,
-            )
-            messages.success(request, f'File added successfully.')
-    return render(request, "Add_notice.html")
+
+        if notice_id:  # If an existing notice ID is provided, update it
+            notice = get_object_or_404(Notice, id=notice_id)
+            notice.title = title
+            if pdf:
+                notice.pdf = pdf  # Update file if provided
+            notice.save()
+            messages.success(request, "Notice updated successfully.")
+        else:  # Otherwise, create a new notice
+            if title and pdf:
+                Notice.objects.create(title=title, pdf=pdf, uploaded_at=now().date())
+                messages.success(request, "File added successfully.")
+
+        return redirect("AddNotice")  # Reload the page after adding/updating
+
+    return render(request, "Add_notice.html", {"notices": notices})
+
+@user_passes_test(is_admin, login_url='/')
+def delete_notice(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id)
+    notice.delete()
+    messages.success(request, "Notice deleted successfully.")
+    return redirect("AddNotice")  # Redirect to the AddNotice page
 
 def Notices(request):
     notices = Notice.objects.all().order_by('-id')

@@ -2,56 +2,69 @@
 
 {% block first %}
 
-<div class="container mx-auto mt-5">
-    <form class="w-full sm:max-w-lg md:max-w-2xl lg:max-w-10xl xl:max-w-6xl mx-auto bg-green-200 p-8 rounded-lg shadow-lg" method="POST" enctype="multipart/form-data">
+<div class="container mx-auto mt-5 px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold text-center text-green-600 mb-8"> Booking Approval List</h2>
+    <form class="w-full bg-green-200 p-8 rounded-lg shadow-lg" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <table class="w-full text-left table-auto">
-            <thead>
-                <tr class="bg-red-200 text-gray-700">
-                    <th scope="col" class="px-4 py-2">Booking ID</th>
-                    <th scope="col" class="px-4 py-2">User Name</th>
-                    <th scope="col" class="px-4 py-2">User Role</th>
-                    <th scope="col" class="px-4 py-2">Room Type</th>
-
-                    <th scope="col" class="px-4 py-2">Room No</th>
-                    <th scope="col" class="px-4 py-2">Check In</th>
-                    <th scope="col" class="px-4 py-2">Check Out</th>
-                    <th scope="col" class="px-4 py-2">Total Price</th>
-                    <th scope="col" class="px-4 py-2">Payment Method</th>
-                    <th scope="col" class="px-4 py-2">Action</th>
-                    <th scope="col" class="px-4 py-2">Status</th>
+        <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="px-4 py-2">Booking ID</th>
+                    <th class="px-4 py-2">User Name</th>
+                    <th class="px-4 py-2">User Role</th>
+                    <th class="px-4 py-2">Room Type</th>
+                    <th class="px-4 py-2">Room No</th>
+                    <th class="px-4 py-2">Check In</th>
+                    <th class="px-4 py-2">Check Out</th>
+                    <th class="px-4 py-2">Total Price</th>
+                    <th class="px-4 py-2">Payment Method</th>
+                    <th class="px-4 py-2">Actions</th>
+                    <th class="px-4 py-2">Status</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="bg-white divide-y divide-gray-300">
                 {% for bl in booking_list %}
-                <tr class="bg-white border-b border-gray-200">
-                    <td class="px-4 py-2">{{ bl.booking_id }}</td>
-                    <td class="px-4 py-2">{{ bl.user }}</td>
-                    <td class="px-4 py-2">{{ bl.role }}</td>
-                    <td class="px-4 py-2">{{ bl.room.roomtype }}</td>
-                    <td class="px-4 py-2">{{ bl.room }}</td>
-                    <td class="px-4 py-2">{{ bl.check_in|date:"Y-m-d" }}</td>
-                    <td class="px-4 py-2">{{ bl.check_out|date:"Y-m-d" }}</td>
-                    <td class="px-4 py-2">{{ bl.tot_price }}</td>
-                    <td class="px-4 py-2">{{ bl.payment_method }}</td>
-                    {% if bl.confirmed == 0 %}
-                    <td class="px-4 py-2">
-                        <a href="{% url 'approve_booking' bl.booking_id %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 transition duration-200" onclick="return confirm('Are you sure you want to approve this booking?');">Approve</a>
-                        <a href="{% url 'reject_booking' bl.booking_id %}" class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200" onclick="return confirm('Are you sure you want to reject this booking?');">Reject</a>
+                <tr>
+                    <td class="border px-4 py-2">{{ bl.booking_id }}</td>
+                    <td class="border px-4 py-2">{{ bl.user }}</td>
+                    <td class="border px-4 py-2">{{ bl.role }}</td>
+                    <td class="border px-4 py-2">{{ bl.room.roomtype }}</td>
+                    <td class="border px-4 py-2">{{ bl.room }}</td>
+                    <td class="border px-4 py-2">{{ bl.check_in|date:"Y-m-d" }}</td>
+                    <td class="border px-4 py-2">{{ bl.check_out|date:"Y-m-d" }}</td>
+                    <td class="border px-4 py-2">{{ bl.tot_price }}</td>
+                    <td class="border px-4 py-2">{{ bl.payment_method }}</td>
+                    <td class="border px-4 py-2 flex justify-center">
+                        {% if bl.confirmed == 0 %}
+                        <a href="{% url 'approve_booking' bl.booking_id %}" class="text-green-600 hover:text-green-800 mr-2" title="Approve Booking" onclick="return confirm('Are you sure you want to approve this booking?');">
+                            <i class="fas fa-check"></i>
+                        </a>
+                        <a href="{% url 'reject_booking' bl.booking_id %}" class="text-red-600 hover:text-red-800" title="Reject Booking" onclick="return confirm('Are you sure you want to reject this booking?');">
+                            <i class="fas fa-times"></i>
+                        </a>
+                        {% else %}
+                        <span class="text-gray-500">No Action</span>
+                        {% endif %}
                     </td>
-                    {% else %}
-                    <td class="px-4 py-2"></td>
-                    {% endif %}
-                    {% if bl.confirmed == 1 %}
-                    <td class="px-4 py-2 text-green-500 font-semibold">Confirmed</td>
-                    {% else %}
-                    <td class="px-4 py-2 text-red-500 font-semibold">Not Confirmed</td>
-                    {% endif %}
+                    <td class="border px-4 py-2">
+                        {% if bl.confirmed == 1 %}
+                        <span class="text-green-500 font-semibold">Confirmed</span>
+                        {% else %}
+                        <span class="text-red-500 font-semibold">Not Confirmed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11" class="text-center py-4"><strong>No bookings found.</strong></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </form>
 </div>
+
+<!-- Include FontAwesome for Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 {% endblock %}

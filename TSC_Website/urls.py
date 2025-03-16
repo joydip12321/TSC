@@ -47,6 +47,8 @@ urlpatterns = [
 
     
     path('AddNotice/',views.AddNotice,name="AddNotice"),
+    path('delete_notice/<int:notice_id>/', views.delete_notice, name="delete_notice"),  # Add this line
+
     path('AddRoom/',views.AddRoom,name="AddRoom"),
     path('adminRoom/',views.AdminRoom,name="adminRoom"),
     path('update_room/<int:room_id>',views.UpdateRoom,name="update_room"),
