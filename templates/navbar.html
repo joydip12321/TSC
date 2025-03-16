@@ -202,7 +202,7 @@
                     <i id="user-icon" class="fa-solid fa-user text-sm cursor-pointer p-2"></i>
                 
                     <!-- Dropdown Menu -->
-                    <ul id="user-menu" class="absolute right-0  text-sm hidden bg-white shadow-lg rounded-md py-2 w-40 text-black z-50 border">
+                    <ul id="user-menu" class="absolute text-sm lg:right-0 md:right-0 hidden bg-white shadow-lg rounded-md py-2 text-black z-50 border">
                         {% if user.is_authenticated %}
                         <li class="px-3 py-1 hover:bg-gray-200">
                             <a href="{% url 'logout' %}" class="block whitespace-nowrap">Sign Out</a>
@@ -215,7 +215,7 @@
                             <a href="{% url 'register' %}" class="block whitespace-nowrap">Register</a>
                         </li>
                         {% endif %}
-                        <li class="px-4 py-2 hover:bg-gray-200">
+                        <li class="px-3 py-1 hover:bg-gray-200">
                             <a href="{% url 'AdminLogin' %}" class="block whitespace-nowrap">Admin</a>
                         </li>
                     </ul>
@@ -285,69 +285,44 @@
 </footer>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Room Dropdown Logic
-        const roomToggle = document.getElementById("room-toggle");
-        const roomDropdown = document.getElementById("room-dropdown");
-        const diningToggle = document.getElementById("dining-toggle");
-        const diningDropdown = document.getElementById("dining-dropdown");
-        const userIcon = document.getElementById("user-icon");
-        const userMenu = document.getElementById("user-menu");
-
-        // Toggle Room Dropdown
-        roomToggle.addEventListener("click", function (event) {
-            event.stopPropagation();
-            
-            // Close dining dropdown if it's open
-            if (!diningDropdown.classList.contains("hidden")) {
-                diningDropdown.classList.add("hidden");
-            }
-
-            // Toggle room dropdown visibility
-            roomDropdown.classList.toggle("hidden");
+        const dropdownButtons = document.querySelectorAll("button[id$='-toggle']");
+        const dropdownMenus = document.querySelectorAll("ul[id$='-dropdown']");
+    
+        dropdownButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const targetDropdown = document.getElementById(button.id.replace("-toggle", "-dropdown"));
+    
+                dropdownMenus.forEach(menu => {
+                    if (menu !== targetDropdown) {
+                        menu.classList.add("hidden");
+                    }
+                });
+    
+                targetDropdown.classList.toggle("hidden");
+            });
         });
-
-        // Toggle Dining Dropdown
-        diningToggle.addEventListener("click", function (event) {
-            event.stopPropagation();
-            
-            // Close room dropdown if it's open
-            if (!roomDropdown.classList.contains("hidden")) {
-                roomDropdown.classList.add("hidden");
-            }
-
-            // Toggle dining dropdown visibility
-            diningDropdown.classList.toggle("hidden");
-        });
-
-        // Close dropdowns if clicked outside
+    
+        // Close dropdowns when clicking outside
         document.addEventListener("click", function (event) {
-            if (!roomToggle.contains(event.target) && !roomDropdown.contains(event.target)) {
-                roomDropdown.classList.add("hidden");
-            }
-            if (!diningToggle.contains(event.target) && !diningDropdown.contains(event.target)) {
-                diningDropdown.classList.add("hidden");
-            }
-            if (!userIcon.contains(event.target) && !userMenu.contains(event.target)) {
-                userMenu.classList.add("hidden");
+            if (![...dropdownButtons].some(button => button.contains(event.target))) {
+                dropdownMenus.forEach(menu => menu.classList.add("hidden"));
             }
         });
-
-        // Toggle User Menu on User Icon Click
-        userIcon.addEventListener("click", function (event) {
-            event.stopPropagation();
-            userMenu.classList.toggle("hidden");
-        });
-
-        // Set Active Class for Nav Links
+    });
+    
+          document.addEventListener("DOMContentLoaded", function () {
+        // Get all nav links
         let navLinks = document.querySelectorAll("nav ul li a");
+
+        // Get the current URL
         let currentUrl = window.location.href;
+
         navLinks.forEach(link => {
             if (link.href === currentUrl) {
                 link.classList.add("active");
             }
         });
-
-        // Menu Visibility Toggle
+    });
         function Menu(e) {
             let list = document.querySelector('#Mymenu');
             if (e.name === 'menu') {
@@ -359,28 +334,43 @@
             }
         }
 
-        // Update Unread Notification Count
-        function updateUnreadCount() {
-            fetch("{% url 'get_unread_notification_count' %}")
-                .then(response => response.json())
-                .then(data => {
-                    const countElement = document.querySelector('.unread-count');
-                    if (data.unread_count > 0) {
-                        countElement.innerText = data.unread_count;
-                        countElement.style.display = 'inline'; // Show the count
-                    } else {
-                        countElement.style.display = 'none'; // Hide the count
-                    }
-                });
-        }
+    function updateUnreadCount() {
+        fetch("{% url 'get_unread_notification_count' %}")
+            .then(response => response.json())
+            .then(data => {
+                const countElement = document.querySelector('.unread-count');
+                if (data.unread_count > 0) {
+                    countElement.innerText = data.unread_count;
+                    countElement.style.display = 'inline'; // Show the count
+                } else {
+                    countElement.style.display = 'none'; // Hide the count
+                }
+            });
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const userIcon = document.getElementById("user-icon");
+        const userMenu = document.getElementById("user-menu");
 
-        // Call updateUnreadCount every 10 seconds
-        setInterval(updateUnreadCount, 10000);
-        // Call once on page load
-        updateUnreadCount();
+        // Toggle dropdown menu on user icon click
+        userIcon.addEventListener("click", function (event) {
+            event.stopPropagation();
+            userMenu.classList.toggle("hidden");
+        });
+
+        // Hide dropdown menu when clicking outside
+        document.addEventListener("click", function (event) {
+            if (!userIcon.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.classList.add("hidden");
+            }
+        });
     });
-</script>
 
+    // Call updateUnreadCount every 10 seconds
+    setInterval(updateUnreadCount, 10000);
+    // Call once on page load
+    updateUnreadCount();
+
+    </script>
 </body>
 
 </html>
