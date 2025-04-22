@@ -70,6 +70,7 @@ class Booking(models.Model):
     PAYMENT_CHOICES = [
         ('CASH', 'CASH'),
         ('E-Payment', 'E-Payment'),
+        ('Check','Check')
     ]
     booking_id = models.AutoField(primary_key=True)
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
@@ -79,12 +80,14 @@ class Booking(models.Model):
     check_out=models.DateTimeField()
     tot_price=models.IntegerField(default=0)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='CASH')
+    check_no = models.CharField(max_length=50, null=True, blank=True)
+    bank_name = models.CharField(max_length=100, null=True, blank=True)
     confirmed = models.IntegerField(default=0) 
     role=models.CharField(max_length=10,default="Student")
     def __str__(self):
         return self.room.room
 
-from django.db import models
+
 
 class MealTime(models.Model):  
     """Stores meal times like Breakfast, Lunch, and Dinner."""

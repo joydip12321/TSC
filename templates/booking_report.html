@@ -1,0 +1,167 @@
+{% extends "image.html" %}
+
+{% block first %}
+<div class="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
+
+    <h2 class="text-3xl font-bold text-center mb-8 text-blue-700 bg-gradient-to-r from-blue-100 to-blue-50 py-4 rounded-lg shadow">
+        Booking Report (Confirmed Only)
+    </h2>
+
+    <!-- Filter Controls -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">Room</label>
+            <select id="room" name="room" class="w-full p-2.5 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <option value="">All Rooms</option>
+                {% for room in rooms %}
+                    <option value="{{ room.id }}" {% if request.GET.room == room.id|stringformat:"s" %}selected{% endif %}>{{ room }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">Username</label>
+            <select id="user" name="user" class="w-full p-2.5 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <option value="">All Users</option>
+                {% for user in users %}
+                    <option value="{{ user.id }}" {% if request.GET.user == user.id|stringformat:"s" %}selected{% endif %}>{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">From Date</label>
+            <input type="date" id="from_date" name="from_date" value="{{ request.GET.from_date }}"
+                   class="w-full p-2.5 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">To Date</label>
+            <input type="date" id="to_date" name="to_date" value="{{ request.GET.to_date }}"
+                   class="w-full p-2.5 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+    </div>
+
+    <!-- Filter Button -->
+    <div class="mb-8 text-right">
+        <button onclick="applyFilters()"
+                class="bg-blue-600 hover:bg-blue-700 transition-colors text-white font-semibold py-2 px-5 rounded-xl shadow-md">
+            Apply Filters
+        </button>
+    </div>
+
+    <!-- Generate PDF Button -->
+    <div class="text-left mb-4">
+        <button onclick="downloadPDF()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mt-2">
+            Generate PDF
+        </button>
+    </div>
+
+    <!-- Report Table -->
+    <div class="overflow-x-auto rounded-xl shadow-md border border-gray-200">
+        <table class="w-full border-collapse text-left" id="reportTable">
+            <thead class="bg-blue-100 text-blue-800 uppercase text-sm">
+                <tr>
+                    <th class="px-4 py-3 border">#</th>
+                    <th class="px-4 py-3 border">Name</th>
+                    <th class="px-4 py-3 border">Username</th>
+                    <th class="px-4 py-3 border">Email</th>
+                    <th class="px-4 py-3 border">Room</th>
+                    <th class="px-4 py-3 border">Check In</th>
+                    <th class="px-4 py-3 border">Check Out</th>
+                    <th class="px-4 py-3 border">Total Price</th>
+                    <th class="px-4 py-3 border">Payment</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white text-gray-700">
+                {% for booking in bookings %}
+                    <tr class="hover:bg-gray-50 transition-all">
+                        <td class="px-4 py-3 border">{{ forloop.counter }}</td>
+                        <td class="px-4 py-3 border">{{ booking.user.get_full_name  }}</td>
+                        <td class="px-4 py-3 border">{{ booking.user.username  }}</td>
+
+                        <td class="px-4 py-3 border">{{ booking.email }}</td>
+                        <td class="px-4 py-3 border">{{ booking.room }}</td>
+                        <td class="px-4 py-3 border">{{ booking.check_in|date:"Y-m-d"}}</td>
+                        <td class="px-4 py-3 border">{{ booking.check_out|date:"Y-m-d"}}</td>
+                        <td class="px-4 py-3 border">{{ booking.tot_price }}</td>
+                        <td class="px-4 py-3 border">{{ booking.payment_method }}
+                            {% if booking.payment_method == "Check" %}
+                            no: {{ booking.check_no }},
+                            Bank: {{booking.bank_name}}
+                            {% endif %}
+    
+                            {% if booking.payment_method == "E-Payment" %}
+                            Transaction ID: {{ booking.check_no }},
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="px-4 py-4 text-center text-gray-500">No confirmed bookings found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Filter Logic -->
+<script>
+    function applyFilters() {
+        const room = document.getElementById("room").value;
+        const user = document.getElementById("user").value;
+        const from_date = document.getElementById("from_date").value;
+        const to_date = document.getElementById("to_date").value;
+
+        const params = new URLSearchParams();
+        if (room) params.append("room", room);
+        if (user) params.append("user", user);
+        if (from_date) params.append("from_date", from_date);
+        if (to_date) params.append("to_date", to_date);
+
+        window.location.href = "?" + params.toString();
+    }
+
+    async function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const table = document.querySelector("#reportTable");
+
+    // Get selected filter values
+    const userSelect = document.getElementById("user");
+    const roomSelect = document.getElementById("room");
+    const fromDate = document.getElementById("from_date").value || "N/A";
+    const toDate = document.getElementById("to_date").value || "N/A";
+
+    const selectedUser = userSelect.options[userSelect.selectedIndex].text;
+    const selectedRoom = roomSelect.options[roomSelect.selectedIndex].text;
+
+    const canvas = await html2canvas(table, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("l", "mm", "a4");
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    // Titles
+    pdf.setFontSize(18);
+    pdf.text("Booking Report TSC", pdfWidth / 2, 15, { align: "center" });
+
+    pdf.setFontSize(14);
+    pdf.text("Jashore University of Science and Technology", pdfWidth / 2, 23, { align: "center" });
+
+    pdf.setFontSize(12);
+    pdf.text(`User: ${selectedUser}`, pdfWidth / 2, 30, { align: "center" });
+    pdf.text(`Room: ${selectedRoom}`, pdfWidth / 2, 37, { align: "center" });
+    pdf.text(`From: ${fromDate}    To: ${toDate}`, pdfWidth / 2, 44, { align: "center" });
+
+    // Table below the text
+    pdf.addImage(imgData, "PNG", 10, 52, pdfWidth - 20, pdfHeight);
+
+    pdf.save("booking_report.pdf");
+}
+
+
+</script>
+{% endblock %}

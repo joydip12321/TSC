@@ -19,12 +19,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div>
                         <label for="check_date" class="block text-gray-700 font-medium">Date</label>
-                        <input type="date" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" name="check_date" id="check_date" required>
+                        <input type="date" name="check_date" id="check_date" required class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400">
                     </div>
 
                     <div>
                         <label for="start_time" class="block text-gray-700 font-medium">Start Hour</label>
-                        <select name="start_time" id="start_time" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" required onchange="updateEndTime(); updateTotalPrice();">
+                        <select name="start_time" id="start_time" required onchange="updateEndTime(); updateTotalPrice();" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400">
                             <option value="">Select Hour</option>
                             {% for hour in hours %}
                                 <option value="{{ hour }}">{{ hour }}:00</option>
@@ -34,18 +34,39 @@
 
                     <div>
                         <label for="end_time" class="block text-gray-700 font-medium">End Hour</label>
-                        <select name="end_time" id="end_time" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" required onchange="updateTotalPrice();">
+                        <select name="end_time" id="end_time" required onchange="updateTotalPrice();" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400">
                             <option value="">Select Hour</option>
                         </select>
                     </div>
 
                     <div>
                         <label for="total_price" class="block text-gray-700 font-medium">Total Price</label>
-                        <input name="total_price" id="totalPrice" required type="text" class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-600" readonly />
+                        <input name="total_price" id="totalPrice" type="text" class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-600" readonly>
                     </div>
                 </div>
 
-                <div class="flex justify-center mt-6">
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                        <label for="payment_method" class="block text-gray-700 font-medium">Payment Method</label>
+                        <select name="payment_method" id="payment_method" required onchange="toggleCheckFields();" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400">
+                            <option value="Cash">Cash</option>
+                            <option value="Check">Check</option>
+                            <option value="E-Payment">E-Payment</option>
+                        </select>
+                    </div>
+
+                    <div id="check_no_field" style="display: none;">
+                        <label for="check_no" class="block text-gray-700 font-medium">Check Number</label>
+                        <input type="text" name="check_no" id="check_no" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400">
+                    </div>
+
+                    <div id="bank_name_field" style="display: none;">
+                        <label for="bank_name" class="block text-gray-700 font-medium">Bank Name</label>
+                        <input type="text" name="bank_name" id="bank_name" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400">
+                    </div>
+                </div>
+
+                <div class="flex justify-center mt-8">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-300">
                         Book Now
                     </button>
@@ -60,10 +81,8 @@
         const startTimeSelect = document.getElementById('start_time');
         const endTimeSelect = document.getElementById('end_time');
         const selectedStartTime = parseInt(startTimeSelect.value);
-        
         endTimeSelect.innerHTML = '<option value="">Select Hour</option>';
-        
-        for (let hour = selectedStartTime + 1; hour < 24; hour++) {  
+        for (let hour = selectedStartTime + 1; hour <= 23; hour++) {
             endTimeSelect.innerHTML += `<option value="${hour}">${hour}:00</option>`;
         }
     }
@@ -71,15 +90,27 @@
     function updateTotalPrice() {
         var startHour = parseInt(document.getElementById('start_time').value);
         var endHour = parseInt(document.getElementById('end_time').value);
-        var roomPrice = {{ room_price }}; 
-
+        var roomPrice = {{ room_price }};
         var numberOfHours = endHour - startHour;
         var totalPrice = numberOfHours * roomPrice;
-
         if (!isNaN(totalPrice) && numberOfHours > 0) {
             document.getElementById('totalPrice').value = totalPrice.toFixed(2);
         } else {
             document.getElementById('totalPrice').value = '';
+        }
+    }
+
+    function toggleCheckFields() {
+        const method = document.getElementById('payment_method').value;
+        const checkFields = document.getElementById('check_no_field');
+        const bankFields = document.getElementById('bank_name_field');
+
+        if (method === 'Check') {
+            checkFields.style.display = 'block';
+            bankFields.style.display = 'block';
+        } else {
+            checkFields.style.display = 'none';
+            bankFields.style.display = 'none';
         }
     }
 </script>

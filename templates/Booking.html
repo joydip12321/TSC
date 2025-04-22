@@ -36,10 +36,24 @@
                         <label for="payment_method" class="block text-gray-700 font-medium">Payment Method</label>
                         <select id="id_payment_method" name="payment_method" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400">
                             <option value="CASH">Cash-on</option>
-                            <option value="ONLINE">Online</option>
+                            <option value="E-Payment">E-Payment</option>
+                            <option value="Check">Check</option>
+
                         </select>
                     </div>
                 </div>
+                <div id="checkFields" class="hidden mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="check_no" class="block text-gray-700 font-medium">Check Number</label>
+                        <input type="text" name="check_no" id="check_no" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" placeholder="Enter Check Number">
+                    </div>
+                
+                    <div>
+                        <label for="bank_name" class="block text-gray-700 font-medium">Bank Name</label>
+                        <input type="text" name="bank_name" id="bank_name" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" placeholder="Enter Bank Name">
+                    </div>
+                </div>
+                
 
                 <div class="flex justify-center mt-6">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-300">
@@ -79,5 +93,15 @@
             document.getElementById('totalPrice').value = "0.00";
         }
     }
+    // Show/Hide check fields based on payment method
+document.getElementById('id_payment_method').addEventListener('change', function () {
+    var checkFields = document.getElementById('checkFields');
+    if (this.value === 'Check') {
+        checkFields.classList.remove('hidden');
+    } else {
+        checkFields.classList.add('hidden');
+    }
+});
+
 </script>
 {% endblock %}

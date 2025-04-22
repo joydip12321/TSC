@@ -2,13 +2,13 @@
 
 {% block first %}
 
-<div class="container mx-auto mt-8 mb-20 p-6">
-    <div class="bg-gradient-to-r from-green-300 to-green-400 p-6 rounded-lg shadow-lg">
-        <h2 class="text-center text-3xl font-bold text-white mb-6">Booking List</h2>
+<div class=" mx-auto mt-4 mb-10 p-4">
+    <div class="bg-gradient-to-r from-blue-300 to-blue-400 p-6 rounded-lg shadow-lg">
+        <h2 class="text-center text-3xl font-bold text-white mb-6">My Booking List</h2>
         
         <div class="overflow-x-auto">
             <table class="w-full text-left border border-gray-300 rounded-lg shadow-md">
-                <thead class="bg-green-600 text-white text-md uppercase tracking-wider">
+                <thead class="bg-blue-200 text-black text-md uppercase tracking-wider">
                     <tr>
                         <th class="px-1 py-1">Booking ID</th>
                         <th class="px-1 py-1">User Name</th>
@@ -18,7 +18,7 @@
                         <th class="px-1 py-1">Check In</th>
                         <th class="px-1 py-1">Check Out</th>
                         <th class="px-1 py-1">Total Price</th>
-                        <th class="px-1 py-1">Payment</th>
+                        <th class="px-1 py-1">Payment Status</th>
                         <th class="px-1 py-1">Status</th>
                     </tr>
                 </thead>
@@ -33,8 +33,17 @@
                         <td class="px-1 py-1 text-gray-700">{{ bl.check_in|date:"Y-m-d" }}</td>
                         <td class="px-1 py-1 text-gray-700">{{ bl.check_out|date:"Y-m-d" }}</td>
                         <td class="px-1 py-1 text-gray-800 font-semibold"><i class="fa-solid fa-bangladeshi-taka-sign"></i> {{ bl.tot_price }}</td>
-                        <td class="px-1 py-1 text-gray-700">{{ bl.payment_method }}</td>
-                        <td class="px-1 py-1 font-semibold {% if bl.confirmed == 1 %} text-green-500 {% else %} text-red-500 {% endif %}">
+                            <td class="px-1 py-1 text-gray-700">{{ bl.payment_method }}
+                            {% if bl.payment_method == "Check" %}
+                            no: {{ bl.check_no }},
+                            Bank: {{bl.bank_name}}
+                            {% endif %}
+
+                            {% if bl.payment_method == "E-Payment" %}
+                            Transaction ID: {{ bl.check_no }},
+                            {% endif %}
+                        </td>
+                                                <td class="px-1 py-1 font-semibold {% if bl.confirmed == 1 %} text-green-500 {% else %} text-red-500 {% endif %}">
                             {% if bl.confirmed == 1 %}
                                 ✅ Confirmed
                             {% else %}

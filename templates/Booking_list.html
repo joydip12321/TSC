@@ -2,39 +2,48 @@
 
 {% block first %}
 
-<div class="container mx-auto mt-5 px-4 sm:px-6 lg:px-8">
+<div class=" mx-auto mt-5 px-4 sm:px-6 lg:px-8">
     <h2 class="text-2xl font-bold text-center text-green-600 mb-8"> Booking Approval List</h2>
-    <form class="w-full bg-green-200 p-8 rounded-lg shadow-lg" method="POST" enctype="multipart/form-data">
+    <form class="w-full bg-green-200 p-2 rounded-lg shadow-lg" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <table class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-200">
                 <tr>
-                    <th class="px-4 py-2">Booking ID</th>
-                    <th class="px-4 py-2">User Name</th>
-                    <th class="px-4 py-2">User Role</th>
-                    <th class="px-4 py-2">Room Type</th>
-                    <th class="px-4 py-2">Room No</th>
-                    <th class="px-4 py-2">Check In</th>
-                    <th class="px-4 py-2">Check Out</th>
-                    <th class="px-4 py-2">Total Price</th>
-                    <th class="px-4 py-2">Payment Method</th>
-                    <th class="px-4 py-2">Actions</th>
-                    <th class="px-4 py-2">Status</th>
+                    <th class="px-1 py-1">Book ID</th>
+                    <th class="px-1 py-1"> Name</th>
+                    <th class="px-1 py-1">User Role</th>
+                    <th class="px-1 py-1">Room Type</th>
+                    <th class="px-1 py-1">Room No</th>
+                    <th class="px-1 py-1">Check In</th>
+                    <th class="px-1 py-1">Check Out</th>
+                    <th class="px-1 py-1">Total Price</th>
+                    <th class="px-1 py-1">Payment Method</th>
+                    <th class="px-1 py-1">Actions</th>
+                    <th class="px-1 py-1">Status</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-300">
                 {% for bl in booking_list %}
                 <tr>
-                    <td class="border px-4 py-2">{{ bl.booking_id }}</td>
-                    <td class="border px-4 py-2">{{ bl.user }}</td>
-                    <td class="border px-4 py-2">{{ bl.role }}</td>
-                    <td class="border px-4 py-2">{{ bl.room.roomtype }}</td>
-                    <td class="border px-4 py-2">{{ bl.room }}</td>
-                    <td class="border px-4 py-2">{{ bl.check_in|date:"Y-m-d" }}</td>
-                    <td class="border px-4 py-2">{{ bl.check_out|date:"Y-m-d" }}</td>
-                    <td class="border px-4 py-2">{{ bl.tot_price }}</td>
-                    <td class="border px-4 py-2">{{ bl.payment_method }}</td>
-                    <td class="border px-4 py-2 flex justify-center">
+                    <td class="border px-1 py-1">{{ bl.booking_id }}</td>
+                    <td class="border px-1 py-1">{{ bl.user.get_full_name }}</td>
+                    <td class="border px-1 py-1">{{ bl.role }}</td>
+                    <td class="border px-1 py-1">{{ bl.room.roomtype }}</td>
+                    <td class="border px-1 py-1">{{ bl.room }}</td>
+                    <td class="border px-1 py-1">{{ bl.check_in|date:"Y-m-d" }}</td>
+                    <td class="border px-1 py-1">{{ bl.check_out|date:"Y-m-d" }}</td>
+                    <td class="border px-1 py-1">{{ bl.tot_price }}</td>
+                    <td class="border px-1 py-1">{{ bl.payment_method }}
+                        {% if bl.payment_method == "Check" %}
+                        no: {{ bl.check_no }},
+                        Bank: {{bl.bank_name}}
+                        {% endif %}
+
+                        {% if bl.payment_method == "E-Payment" %}
+                        Transaction ID: {{ bl.check_no }},
+                        {% endif %}
+                    </td>
+                    <td class="border px-1 py-1 flex justify-center">
                         {% if bl.confirmed == 0 %}
                         <a href="{% url 'approve_booking' bl.booking_id %}" class="text-green-600 hover:text-green-800 mr-2" title="Approve Booking" onclick="return confirm('Are you sure you want to approve this booking?');">
                             <i class="fas fa-check"></i>
@@ -46,7 +55,7 @@
                         <span class="text-gray-500">No Action</span>
                         {% endif %}
                     </td>
-                    <td class="border px-4 py-2">
+                    <td class="border px-1 py-1">
                         {% if bl.confirmed == 1 %}
                         <span class="text-green-500 font-semibold">Confirmed</span>
                         {% else %}

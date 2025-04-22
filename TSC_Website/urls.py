@@ -65,6 +65,7 @@ urlpatterns = [
     path('Booking_list/',views.Booking_list,name="Booking_list"),
     path('reject_booking/<int:booking_id>/', views.reject_booking, name='reject_booking'),
     path('approve_booking/<int:booking_id>/', views.approve_booking, name='approve_booking'),
+    path('report_bookings/', views.booking_report, name='report_bookings'),
 
     path('dinning/', views.Dinning, name='dinning'),
     path('add_to_cart/<int:pk>/',views.AddCart,name="add_to_cart"),
@@ -79,4 +80,8 @@ urlpatterns = [
 
     path('get_unread_notification_count/', views.get_unread_notification_count, name='get_unread_notification_count'),
 
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/fail/', views.payment_fail, name='payment_fail'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
+    
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

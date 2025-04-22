@@ -11,6 +11,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
 
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
   .active {
     background-color: #1f2937; /* Dark Gray */
@@ -89,6 +93,10 @@
                 <li class="mx-2 my-6 md:my-0 " >
                     <a href="{% url 'Booking_list' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">Booking</a>
                     </li>
+
+                    <li class="mx-2 my-6 md:my-0 " >
+                        <a href="{% url 'report_bookings' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">Report</a>
+                        </li>
                     <li class="mx-2 my-6 md:my-0 " >
                         <a href="{% url 'adminItem' %}" class="text-sm hover:sm:text-white hover:hover:text-pink-50 duration-500">Item</a>
                     </li>

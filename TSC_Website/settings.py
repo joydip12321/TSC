@@ -56,6 +56,13 @@ MIDDLEWARE = [
         # 'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this
 
 ]
+# Increase session timeout to avoid session expiration
+SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_SAVE_EVERY_REQUEST = True  # Ensure the session is saved on every request
+# settings.py
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 

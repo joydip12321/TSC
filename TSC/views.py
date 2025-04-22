@@ -28,6 +28,9 @@ from django.urls import reverse
 from django.utils.encoding import force_str
 from django.core.mail import EmailMessage
 from decimal import Decimal, InvalidOperation
+from django.urls import reverse
+import requests
+from django.utils.dateparse import parse_date
 
 
 def custom_login_required(function=None, redirect_field_name='next', login_url=None):
@@ -400,70 +403,120 @@ def EventRoom(request):
     }
     return render(request, "Event_room.html", context)
 
-
 @custom_login_required
-def EventBooking(request,room_no):
-    hours = list(range(9, 23))  
-
+def EventBooking(request, room_no):
+    hours = list(range(9, 23))
     user = request.user
     try:
         user_profile = UserProfile.objects.get(user=user)
         role = user_profile.role
     except UserProfile.DoesNotExist:
         role = "admin"
-        
-    room = get_object_or_404(Room, room=room_no)  # Fetch the room based on room number
-    room_price = room.price  # Get the price of the room
+
+    room = get_object_or_404(Room, room=room_no)
+    room_price = room.price
 
     if request.method == 'POST':
         check_date = request.POST.get('check_date')
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')
+        payment_method = request.POST.get('payment_method')
+        check_no = request.POST.get('check_no')
+        bank_name = request.POST.get('bank_name')
+
         today = timezone.now().date()
 
-        if not check_date or not start_time or not end_time:
+        if not check_date or not start_time or not end_time or not payment_method:
             messages.error(request, 'Please provide all required fields.')
-        elif start_time >= end_time:
-            messages.error(request, 'End hour must be after the start hour.')
+        elif int(start_time) >= int(end_time):
+            messages.error(request, 'End hour must be after start hour.')
         elif datetime.strptime(check_date, '%Y-%m-%d').date() < today:
-            messages.error(request, 'Provide a future date to book the room.')
+            messages.error(request, 'Choose a future date for booking.')
+        elif payment_method == 'Check' and (not check_no or not bank_name):
+            messages.error(request, 'Check number and bank name are required for Check payment.')
+            return redirect(request.path)
         else:
-            # Calculate check-in and check-out datetime
             check_in = datetime.strptime(check_date, '%Y-%m-%d') + timedelta(hours=int(start_time))
             check_out = datetime.strptime(check_date, '%Y-%m-%d') + timedelta(hours=int(end_time))
-            
-            qs = Booking.objects.filter(
+
+            qs = Booking.objects.exclude(confirmed=0).filter(
                 room=room,
-                confirmed=1,
                 check_in__lt=check_out,
                 check_out__gt=check_in,
             )
-            
             if qs.exists():
-                messages.error(request, 'Room is not available for the selected time.')
+                messages.error(request, 'Room is not available at that time.')
             else:
-                total_price = (check_out - check_in).total_seconds() / 3600 * room_price  # Calculate total price based on hours
-                
+                duration_hours = (check_out - check_in).total_seconds() / 3600
+                total_price = Decimal(duration_hours * room_price)
                 last_booking = Booking.objects.last()
-                booking_id = 1 if last_booking is None else last_booking.booking_id + 1
-                email = request.user.email
-                
-                Booking.objects.create(
-                    booking_id=booking_id,
-                    email=email,
-                    user=user,
-                    room=room,
-                    check_in=check_in,
-                    check_out=check_out,
-                    tot_price=Decimal(total_price),
-                    payment_method='Cash',
-                    role=role,
-                )
+                booking_id = last_booking.booking_id + 1 if last_booking else 1
 
-                messages.success(request, 'Booking request done successfully. Wait for the confirmation email from us.')
-                return redirect('event_room')
+                if payment_method == 'E-Payment':
+                    success_url = request.build_absolute_uri(
+                        reverse('payment_success') +
+                        f"?booking_id={booking_id}"
+                        f"&user_id={user.id}"
+                        f"&email={user.email}"
+                        f"&room_no={room.room}"
+                        f"&check_in={check_in}"
+                        f"&check_out={check_out}"
+                        f"&total_price={total_price}"
+                        f"&role={role}"
+                        f"&check_no={f'BOOK{booking_id}'}"
 
-    return render(request, 'Event_booking.html', {'room': room, 'room_price': room_price,'hours':hours})
+                    )
+
+                    payload = {
+                        'store_id': 'jasho6806716e772ee',
+                        'store_passwd': 'jasho6806716e772ee@ssl',
+                        'total_amount': str(total_price),
+                        'currency': 'BDT',
+                        'tran_id': f'BOOK{booking_id}',
+                        'success_url': success_url,
+                        'fail_url': request.build_absolute_uri(reverse('payment_fail')),
+                        'cancel_url': request.build_absolute_uri(reverse('payment_cancel')),
+                        'cus_name': user.get_full_name(),
+                        'cus_email': user.email,
+                        'cus_add1': 'TSC, Jashore',
+                        'cus_phone': '01995140040',
+                        'shipping_method': 'NO',
+                        'product_name': f'Event Room {room.room}',
+                        'product_category': 'Event Booking',
+                        'product_profile': 'general',
+                    }
+
+                    response = requests.post("https://sandbox.sslcommerz.com/gwprocess/v3/api.php", data=payload)
+                    res_data = response.json()
+
+                    if res_data.get('status') == 'SUCCESS':
+                        return redirect(res_data['GatewayPageURL'])
+                    else:
+                        messages.error(request, 'Payment gateway error.')
+                else:
+                    Booking.objects.create(
+                        booking_id=booking_id,
+                        email=user.email,
+                        user=user,
+                        room=room,
+                        check_in=check_in,
+                        check_out=check_out,
+                        tot_price=total_price,
+                        confirmed=0,
+                        payment_method=payment_method,
+                        check_no=check_no if payment_method == "Check" else None,
+                        bank_name=bank_name if payment_method == "Check" else None,
+                        role=role,
+                    )
+                    messages.success(request, 'Event booking request submitted successfully.')
+                    return redirect('user_booking_list')
+
+    return render(request, 'Event_booking.html', {
+        'room': room,
+        'room_price': room_price,
+        'hours': hours,
+        'page_name': "EVENT BOOKING"
+    })
 
 def ClubRoom(request):
     available_room = Room.objects.filter(roomtype__roomtype="Club Society").order_by('-id')
@@ -569,74 +622,189 @@ def OtherRoom(request):
         'room_type': room_type,
     }
     return render(request, "Other_room.html", context)
-# Booking funtionality
+
+
 @custom_login_required
-def Bookin(request,room_no):
+def Bookin(request, room_no):
     user = request.user
     try:
         user_profile = UserProfile.objects.get(user=user)
         role = user_profile.role
     except UserProfile.DoesNotExist:
         role = "admin"
-    room = get_object_or_404(Room, room=room_no)  # Fetch the room based on room number
-    room_price = room.price  # Get the price of the room
+
+    room = get_object_or_404(Room, room=room_no)
+    room_price = room.price
 
     if request.method == 'POST':
         check_in = request.POST.get('check_in')
         check_out = request.POST.get('check_out')
-        check_in_date = datetime.strptime(check_in, '%Y-%m-%d').date()
-        # check_out_date = datetime.strptime(check_out, '%Y-%m-%d').date()
         payment_method = request.POST.get('payment_method')
+        check_no = request.POST.get('check_no')
+        bank_name = request.POST.get('bank_name')
+
         today = timezone.now().date()
 
         if not check_in or not check_out or not payment_method:
-            messages.error(request, 'Please provide all')
+            messages.error(request, 'Please provide all fields')
         elif parse_date(check_in) >= parse_date(check_out):
-            messages.error(request, 'Check-out date must be after the check-in date.')
-        elif check_in_date < today:
-            messages.error(request, 'Provide future date to book room')
+            messages.error(request, 'Check-out date must be after check-in date')
+        elif parse_date(check_in) < today:
+            messages.error(request, 'Check-in must be in the future')
+        elif payment_method == 'Check' and (not check_no or not bank_name):
+            messages.error(request, 'Please provide check number and bank name for Check payment.')
+            return redirect(request.path)
         else:
-            qs = Booking.objects.filter(
-                confirmed=1,
-                room=room,
-                check_in__lt=check_out,
-                check_out__gt=check_in,
-            )
+            # Check room availability
             qs = Booking.objects.exclude(confirmed=0).filter(
                 room=room,
                 check_in__lt=check_out,
                 check_out__gt=check_in,
             )
-            
             if qs.exists():
-                messages.error(request, 'Room is not available for the selected dates.')
+                messages.error(request, 'Room not available for selected dates.')
             else:
-                room_price = room.price
-                total_price = (parse_date(check_out) - parse_date(check_in)).days * room_price
-                
+                total_days = (parse_date(check_out) - parse_date(check_in)).days
+                total_price = total_days * room_price
                 last_booking = Booking.objects.last()
-                booking_id = 1 if last_booking is None else last_booking.booking_id + 1
-                email=request.user.email
-                Booking.objects.create(
-                    booking_id=booking_id,
-                    email=email,
-                    user=user,
-                    room=room,
-                    check_in=check_in,
-                    check_out=check_out,
-                    tot_price=total_price,
-                    confirmed=0,
-                    payment_method=payment_method,
-                    role=role,
-                )
-                messages.success(request, f'Booking request done successfully,Wait for the confirmation e-mail from us')
-                return redirect('room_list')
-    return render(request,'Booking.html',{'room':room,'room_price':room_price,'page_name':"BOOKING"})
+                booking_id = last_booking.booking_id + 1 if last_booking else 1
+
+                if payment_method == 'E-Payment':
+                    request.session.modified = True  # Ensure session is marked as modified
+                    print("Pending booking stored:", request.session.get('pending_booking'))  # Debugging session data
+                    success_url = request.build_absolute_uri(
+                        reverse('payment_success') +
+                        f"?booking_id={booking_id}"
+                        f"&user_id={user.id}"
+                        f"&email={user.email}"
+                        f"&room_no={room.room}"
+                        f"&check_in={check_in}"
+                        f"&check_out={check_out}"
+                        f"&total_price={total_price}"
+                        f"&role={role}"
+                        f"&check_no={f'BOOK{booking_id}'}"
+                    )
+
+
+                    payload = {
+                        'store_id': 'jasho6806716e772ee',
+                        'store_passwd': 'jasho6806716e772ee@ssl',
+                        'total_amount': str(total_price),
+                        'currency': 'BDT',
+                        'tran_id': f'BOOK{booking_id}',
+                        'success_url': success_url,
+
+                        'fail_url': request.build_absolute_uri(reverse('payment_fail')),
+                        'cancel_url': request.build_absolute_uri(reverse('payment_cancel')),
+                        'cus_name': user.get_full_name(),
+                        'cus_email': user.email,
+                        'cus_add1': 'TSC, Jashore',
+                        'cus_phone': '01995140040',
+                        'shipping_method': 'NO',
+                        'product_name': f'Room {room.room}',
+                        'product_category': 'Room Booking',
+                        'product_profile': 'general',
+                    }
+
+                    response = requests.post("https://sandbox.sslcommerz.com/gwprocess/v3/api.php", data=payload)
+                    res_data = response.json()
+
+                    if res_data.get('status') == 'SUCCESS':
+                        print("Redirecting to URL:", res_data['GatewayPageURL'])  # Check URL
+                        return redirect(res_data['GatewayPageURL'])
+                    else:
+                        messages.error(request, 'Payment gateway error.')
+
+                else:
+                    # Save booking directly
+                    Booking.objects.create(
+                        booking_id=booking_id,
+                        email=user.email,
+                        user=user,
+                        room=room,
+                        check_in=check_in,
+                        check_out=check_out,
+                        tot_price=total_price,
+                        confirmed=0,
+                        payment_method=payment_method,
+                        check_no=check_no if payment_method == "Check" else None,
+                        bank_name=bank_name if payment_method == "Check" else None,
+                        role=role,
+                    )
+                    messages.success(request, 'Booking placed successfully. Wait for confirmation.')
+                    return redirect('user_booking_list')
+
+    return render(request, 'Booking.html', {
+        'room': room,
+        'room_price': room_price,
+        'page_name': "BOOKING",
+
+    })
+
+
+
+@csrf_exempt
+def payment_success(request):
+    booking_id = request.GET.get('booking_id')
+    user_id = request.GET.get('user_id')
+    email = request.GET.get('email')
+    room_no = request.GET.get('room_no')
+    check_in = request.GET.get('check_in')
+    check_out = request.GET.get('check_out')
+    total_price = request.GET.get('total_price')
+    role = request.GET.get('role')
+    check_no = request.GET.get('check_no')
+
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        messages.error(request, "❌ User not found.")
+        return redirect('login')
+
+    room = Room.objects.filter(room=room_no).first()
+    if not room:
+        messages.error(request, "❌ Room not found.")
+        return redirect('room_list')
+
+    if Booking.objects.filter(booking_id=booking_id).exists():
+        messages.info(request, "ℹ️ Booking already confirmed.")
+        return redirect('user_booking_list')
+
+    Booking.objects.create(
+        booking_id=booking_id,
+        email=email,
+        user=user,
+        room=room,
+        check_in=(check_in),
+        check_out=(check_out),
+        tot_price=total_price,
+        confirmed=0,
+        payment_method='E-Payment',
+        role=role,
+        check_no=check_no,
+    )
+
+    messages.success(request, '✅ Payment successful and Booking placed successfully. Wait for confirmation.')
+    return redirect('user_booking_list')
+
+
+@csrf_exempt
+def payment_fail(request):
+    messages.error(request, '❌ Payment failed.')
+    return redirect('room_list')
+
+
+@csrf_exempt
+def payment_cancel(request):
+    messages.warning(request, '⚠️ Payment cancelled by user.')
+    return redirect('room_list')
 
 @custom_login_required
 def UserBookingList(request):
-    booking_list=Booking.objects.all().order_by('-booking_id')
-    return render(request,'user_booking_list.html',{'booking_list':booking_list})
+    booking_list = Booking.objects.filter(user=request.user).order_by('-booking_id')
+    return render(request, 'user_booking_list.html', {'booking_list': booking_list})
+
 
 @user_passes_test(is_admin, login_url='/')
 def Booking_list(request):
@@ -693,6 +861,31 @@ def approve_booking(request, booking_id):
         Notification.objects.create(user=user, message=message)
 
         return redirect('/Booking_list/')
+
+@user_passes_test(is_admin, login_url='/')
+def booking_report(request):
+    bookings = Booking.objects.filter(confirmed=1).order_by('-booking_id')
+
+    room_id = request.GET.get('room')
+    user_id = request.GET.get('user')
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+
+    if room_id:
+        bookings = bookings.filter(room__id=room_id)
+    if user_id:
+        bookings = bookings.filter(user__id=user_id)
+    if from_date:
+        bookings = bookings.filter(check_in__date__gte=parse_date(from_date))
+    if to_date:
+        bookings = bookings.filter(check_out__date__lte=parse_date(to_date))
+
+    context = {
+        'bookings': bookings,
+        'rooms': Room.objects.all(),
+        'users': User.objects.all()
+    }
+    return render(request, 'booking_report.html', context)
 
 @user_passes_test(is_admin, login_url='/')
 def AddItem(request):
