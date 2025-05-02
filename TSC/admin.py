@@ -9,8 +9,3 @@ admin.site.register(MealTime)
 admin.site.register(MenuItem)
 admin.site.register(Orders)
 admin.site.register(Booking)
-
-
-
-
-# Register your models here.

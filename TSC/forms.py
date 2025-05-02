@@ -63,7 +63,6 @@ class UserProfileForm(forms.ModelForm):
         role = cleaned_data.get('role')
 
         if role == 'guest':
-            # Ensure these fields are filled in for guests
             reference_name = cleaned_data.get('reference_name')
             ref_contact = cleaned_data.get('ref_contact')
             ref_role = cleaned_data.get('ref_role')
@@ -74,7 +73,6 @@ class UserProfileForm(forms.ModelForm):
                 raise forms.ValidationError("All reference fields are required for guests.")
 
         elif role == 'student':
-            # Ensure these fields are filled in for students
             student_id = cleaned_data.get('student_id')
             student_dept_name = cleaned_data.get('student_dept_name')
             student_session = cleaned_data.get('student_session')
@@ -83,7 +81,6 @@ class UserProfileForm(forms.ModelForm):
                 raise forms.ValidationError("All student fields are required for students.")
 
         elif role == 'teacher':
-            # Ensure these fields are filled in for teachers
             teacher_id = cleaned_data.get('teacher_id')
             teacher_dept_name = cleaned_data.get('teacher_dept_name')
 
@@ -93,7 +90,7 @@ class UserProfileForm(forms.ModelForm):
 class ItemForm(forms.ModelForm):
     meal_times = forms.ModelMultipleChoiceField(
         queryset=MealTime.objects.all(),
-        widget=forms.CheckboxSelectMultiple,  # ✅ Show checkboxes
+        widget=forms.CheckboxSelectMultiple, 
         required=True
     )
 

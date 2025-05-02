@@ -15,6 +15,7 @@ from django.contrib.auth.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.Home,name='home'),
+    path('about/', views.about_view, name='about'),
     path('notice',views.Notices,name='notice'),
     
     path('AdminLogin/',views.AdminLogin,name="AdminLogin"),

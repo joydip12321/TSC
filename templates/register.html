@@ -8,7 +8,6 @@
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Left Column: User Registration Fields -->
             <div class="space-y-4">
                 <form method="post" class="space-y-4">
                     {% csrf_token %}
@@ -48,7 +47,7 @@
                             <div class="relative">
                                 <input id="password" name="password" type="password" autocomplete="new-password" required
                                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none transition">
-                                <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-0 right-3 flex items-center cursor-pointer"></span>
+                                <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-3 right-3 flex items-center cursor-pointer"></span>
                             </div>
     
                             <small class="text-gray-600">
@@ -64,13 +63,12 @@
                                 <input id="password_confirm" name="password_confirm" type="password" autocomplete="new-password" required
                                 value="{{ user_form.password.value|default:'' }}"
                                        class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm transition duration-150 ease-in-out">
-                                <span toggle="#password_confirm" class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"></span>
+                                <span toggle="#password_confirm" class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-3 right-3 pr-3 flex items-center cursor-pointer"></span>
                             </div>
                         </div>
                     </div>
             </div>
 
-            <!-- Right Column: Role Selection -->
             <div class="space-y-4">
  
             <div>
@@ -86,7 +84,6 @@
             </div>
             
 
-                <!-- Additional Fields for Guest Role -->
                 <div id="guestFields" class="hidden">
                     <h3 class="text-lg font-semibold">Guest Details</h3>
                     <div>
@@ -132,7 +129,6 @@
                    
                 </div>
 
-                <!-- Additional Fields for Student Role -->
                 <div id="studentFields" class="hidden">
                     <h3 class="text-lg font-semibold">Student Details</h3>
                     <div>
@@ -158,7 +154,6 @@
                     </div>
                 </div>
 
-                <!-- Additional Fields for Teacher Role -->
                 <div id="teacherFields" class="hidden">
                     <h3 class="text-lg font-semibold">Teacher Details</h3>
                     <div>
@@ -197,9 +192,7 @@
     </div>
 </div>
 
-<!-- Add Font Awesome for the eye icon -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-<!-- Add JavaScript to toggle password visibility -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const togglePassword = document.querySelectorAll('.toggle-password');

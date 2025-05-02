@@ -1,0 +1,40 @@
+{% extends "navbar.html" %}
+
+{% block start %}
+{% load static %}
+
+<body class="bg-gray-100 mt-10">
+
+  <main class="container mx-auto px-4 py-10 text-center">
+    <!-- Supervisor Section -->
+    <section class="bg-white shadow-md rounded-lg p-6 mb-8 max-w-2xl mx-auto">
+      <img src="{% static 'img/supervisor.jpeg' %}" alt="Supervisor Photo" class="w-32 h-32 mx-auto rounded-full mb-4 object-cover shadow">
+      <h2 class="text-xl font-semibold mb-4 border-b pb-2">Supervised by</h2>
+      <p class="text-gray-700 leading-relaxed">
+        <strong>Sk. Shalauddin Kabir</strong><br>
+        Lecturer,<br>
+        Department of Computer Science and Engineering,<br>
+        Jashore University of Science & Technology
+      </p>
+    </section>
+
+    <!-- Developer Section -->
+    <section class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
+      <img src="{% static 'img/developer.jpg' %}" alt="Developer Photo" class="w-32 h-32 mx-auto rounded-full mb-4 object-cover shadow">
+      <h2 class="text-xl font-semibold mb-4 border-b pb-2">Developed By</h2>
+      <p class="text-gray-700 leading-relaxed">
+        <strong>Joydip Das</strong><br>
+        Department of Computer Science & Engineering,
+<br>
+        Jashore University of Science & Technology<br>
+      </p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-200 py-4 text-center text-sm text-gray-600">
+    &copy; 2025 All rights reserved, JUST TSC
+  </footer>
+
+</body>
+{% endblock %}

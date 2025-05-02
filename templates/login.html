@@ -1,8 +1,9 @@
 {% extends "image.html" %}
 
 {% block first %}
-<div class="flex items-center justify-center min-h-screen bg-cover bg-center relative text-black" style="background-image: url('/static/images/background.jpg');">
-    <div class="absolute inset-0 bg-gray-200 opacity-50"></div> <!-- Dark overlay -->
+<div class="flex items-center justify-center min-h-screen bg-cover bg-center relative text-black"
+    style="background-image: url('/static/images/background.jpg');">
+    <div class="absolute inset-0 bg-gray-200 opacity-50"></div>
 
     <div class="relative max-w-md w-full bg-white bg-opacity-80 p-8 rounded-lg shadow-lg border border-gray-700">
         <h2 class="text-center text-2xl font-extrabold mb-6">
@@ -12,7 +13,6 @@
         <form class="mt-6 space-y-6" method="post">
             {% csrf_token %}
             <div class="space-y-4">
-                <!-- username/Phone -->
                 <div class="relative">
                     <label for="username" class="block text-sm font-medium ">Username</label>
                     <div class="relative">
@@ -20,47 +20,42 @@
                             <i class="fas fa-user"></i>
                         </span>
                         <input id="username" name="username" type="text" required
-                               class="w-full px-4 py-2 pl-10 border border-gray-500 bg-gray-100 text-gray-900 placeholder-gray-500 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                            class="w-full px-4 py-2 pl-10 border border-gray-500 bg-gray-100 text-gray-900 placeholder-gray-500 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
                     </div>
                 </div>
 
-                <!-- Password -->
-                    <!-- Password -->
-<div class="relative">
-    <label for="password" class="block text-sm font-medium ">Password</label>
-    <div class="relative">
-        <!-- Left-side Icon (Lock) -->
-        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-            <i class="fas fa-lock"></i>
-        </span>
 
-        <!-- Password Input Field -->
-        <input id="password" name="password" type="password" required
-               class="w-full px-4 py-2 pl-10 border border-gray-500 bg-transparent placeholder-gray-400 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                <div class="relative">
+                    <label for="password" class="block text-sm font-medium ">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                            <i class="fas fa-lock"></i>
+                        </span>
 
-        <!-- Right-side Icon (Eye for Toggle) -->
-        <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"></span>
-    </div>
-</div>
+                        <input id="password" name="password" type="password" required
+                            class="w-full px-4 py-2 pl-10 border border-gray-500 bg-transparent placeholder-gray-400 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+
+                        <span toggle="#password"
+                            class="fa fa-fw fa-eye field-icon toggle-password absolute inset-y-3 right-3 flex items-center cursor-pointer text-gray-400"></span>
+                    </div>
+                </div>
 
             </div>
 
-            <!-- Forgot Password -->
             <div class="flex justify-between items-center text-sm">
                 <a href="{% url 'password-reset' %}" class="text-blue-400 hover:text-blue-500">
                     Forgot Password?
                 </a>
             </div>
 
-            <!-- Login Button -->
             <div class="mt-4">
-                <button type="submit" class="w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-600 transition duration-200">
+                <button type="submit"
+                    class="w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-600 transition duration-200">
                     Sign In
                 </button>
             </div>
         </form>
 
-        <!-- Register Link -->
         <p class="text-center  text-sm mt-4">
             Don't have an account?
             <a href="{% url 'register' %}" class="text-blue-400 hover:text-blue-500">Sign Up</a>
@@ -68,12 +63,10 @@
     </div>
 </div>
 
-<!-- Font Awesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-<!-- JavaScript for Password Toggle -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.toggle-password').forEach(toggle => {
             toggle.addEventListener('click', function () {
                 let input = document.querySelector(toggle.getAttribute('toggle'));
