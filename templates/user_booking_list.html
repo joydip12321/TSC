@@ -2,47 +2,64 @@
 
 {% block first %}
 
-<div class="container mx-auto mt-5 mb-20">
-    <form class="w-full sm:max-w-lg md:max-w-2xl lg:max-w-10xl xl:max-w-6xl mx-auto bg-green-200 p-8 rounded-lg shadow-lg">
-        {% csrf_token %}
-        <table class="w-full text-left table-auto">
-            <thead>
-                <tr class="bg-red-200 text-gray-700">
-                    <th scope="col" class="px-4 py-2">Booking ID</th>
-                    <th scope="col" class="px-4 py-2">User Name</th>
-                    <th scope="col" class="px-4 py-2">User Role</th>
-                    <th scope="col" class="px-4 py-2">Room Type</th>
-                    <th scope="col" class="px-4 py-2">Room No</th>
-                    <th scope="col" class="px-4 py-2">Check In</th>
-                    <th scope="col" class="px-4 py-2">Check Out</th>
-                    <th scope="col" class="px-4 py-2">Total Price</th>
-                    <th scope="col" class="px-4 py-2">Payment Method</th>
-                    <th scope="col" class="px-4 py-2">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-                {% for bl in booking_list %}
-                <tr class="bg-white border-b border-gray-200">
-                    <td class="px-4 py-2">{{ bl.booking_id }}</td>
-                    <td class="px-4 py-2">{{ bl.user }}</td>
-                    <td class="px-4 py-2">{{ bl.role }}</td>
-                    <td class="px-4 py-2">{{ bl.room.roomtype }}</td>
-                    <td class="px-4 py-2">{{ bl.room }}</td>
-                    <td class="px-4 py-2">{{ bl.check_in|date:"Y-m-d" }}</td>
-                    <td class="px-4 py-2">{{ bl.check_out|date:"Y-m-d" }}</td>
-                    <td class="px-4 py-2">{{ bl.tot_price }}</td>
-                    <td class="px-4 py-2">{{ bl.payment_method }}</td>
-                    {% if bl.confirmed == 1 %}
-                        <td class="px-4 py-2 text-green-500 font-semibold">Confirmed</td>
-                    {% else %}
-                        <td class="px-4 py-2 text-red-500 font-semibold">Not Confirmed</td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </form>
+<div class=" mx-auto mt-4 mb-10 p-4">
+    <div class="bg-gradient-to-r from-blue-300 to-blue-400 p-6 rounded-lg shadow-lg">
+        <h2 class="text-center text-3xl font-bold text-white mb-6">My Booking List</h2>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border border-gray-300 rounded-lg shadow-md">
+                <thead class="bg-blue-200 text-black text-md uppercase tracking-wider">
+                    <tr>
+                        <th class="px-1 py-1">Booking ID</th>
+                        <th class="px-1 py-1">User Name</th>
+                        <th class="px-1 py-1">User Role</th>
+                        <th class="px-1 py-1">Room Type</th>
+                        <th class="px-1 py-1">Room No</th>
+                        <th class="px-1 py-1">Check In</th>
+                        <th class="px-1 py-1">Check Out</th>
+                        <th class="px-1 py-1">Total Price</th>
+                        <th class="px-1 py-1">Payment Status</th>
+                        <th class="px-1 py-1">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-300">
+                    {% for bl in booking_list %}
+                    <tr class="bg-white hover:bg-gray-100 transition duration-200">
+                        <td class="px-1 py-1 text-gray-800 font-medium">{{ bl.booking_id }}</td>
+                        <td class="px-1 py-1 text-gray-700">{{ bl.user }}</td>
+                        <td class="px-1 py-1 text-gray-700">{{ bl.role }}</td>
+                        <td class="px-1 py-1 text-gray-700">{{ bl.room.roomtype }}</td>
+                        <td class="px-1 py-1 text-gray-700">{{ bl.room }}</td>
+                        <td class="px-1 py-1 text-gray-700">{{ bl.check_in|date:"Y-m-d" }}</td>
+                        <td class="px-1 py-1 text-gray-700">{{ bl.check_out|date:"Y-m-d" }}</td>
+                        <td class="px-1 py-1 text-gray-800 font-semibold"><i class="fa-solid fa-bangladeshi-taka-sign"></i> {{ bl.tot_price }}</td>
+                            <td class="px-1 py-1 text-gray-700">{{ bl.payment_method }}
+                            {% if bl.payment_method == "Check" %}
+                            no: {{ bl.check_no }},
+                            Bank: {{bl.bank_name}}
+                            {% endif %}
+
+                            {% if bl.payment_method == "E-Payment" %}
+                            Transaction ID: {{ bl.check_no }},
+                            {% endif %}
+                        </td>
+                                                <td class="px-1 py-1 font-semibold {% if bl.confirmed == 1 %} text-green-500 {% else %} text-red-500 {% endif %}">
+                            {% if bl.confirmed == 1 %}
+                                ✅ Confirmed
+                            {% else %}
+                                ❌ Not Confirmed
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-gray-600 font-medium">No bookings available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

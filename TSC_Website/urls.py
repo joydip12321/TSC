@@ -15,6 +15,7 @@ from django.contrib.auth.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.Home,name='home'),
+    path('about/', views.about_view, name='about'),
     path('notice',views.Notices,name='notice'),
     
     path('AdminLogin/',views.AdminLogin,name="AdminLogin"),
@@ -47,6 +48,8 @@ urlpatterns = [
 
     
     path('AddNotice/',views.AddNotice,name="AddNotice"),
+    path('delete_notice/<int:notice_id>/', views.delete_notice, name="delete_notice"),  # Add this line
+
     path('AddRoom/',views.AddRoom,name="AddRoom"),
     path('adminRoom/',views.AdminRoom,name="adminRoom"),
     path('update_room/<int:room_id>',views.UpdateRoom,name="update_room"),
@@ -63,6 +66,7 @@ urlpatterns = [
     path('Booking_list/',views.Booking_list,name="Booking_list"),
     path('reject_booking/<int:booking_id>/', views.reject_booking, name='reject_booking'),
     path('approve_booking/<int:booking_id>/', views.approve_booking, name='approve_booking'),
+    path('report_bookings/', views.booking_report, name='report_bookings'),
 
     path('dinning/', views.Dinning, name='dinning'),
     path('add_to_cart/<int:pk>/',views.AddCart,name="add_to_cart"),
@@ -77,4 +81,8 @@ urlpatterns = [
 
     path('get_unread_notification_count/', views.get_unread_notification_count, name='get_unread_notification_count'),
 
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/fail/', views.payment_fail, name='payment_fail'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
+    
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

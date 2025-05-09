@@ -6,42 +6,65 @@
         z-index: 2;
         position: relative;
     }
-
 </style>
+
 <div class="container mx-auto availiblity_form">
     <div class="flex justify-center">
-        <div class="w-full lg:w-3/4 mb-8 p-6 rounded shadow-lg bg-aquamarine">
-            <h2 class="mt-3 pt-5 mb-5 text-center font-bold text-4xl text-[#335e8d] drop-shadow-md">Book {{room}} room</h2>
-            <form method="post" class="col-lg-12 mb-4 p-8 rounded shadow-lg bg-blue-200  items-center justify-center"> <!-- Change the form method to POST -->
-                {% csrf_token %} <!-- Add CSRF token for security -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                    <div class="mb-4">
-                        <label for="check_in" class="block text-gray-700"> Check-In Date </label>
-                        <input type="date" class="w-full border rounded px-3 py-2 shadow-none" name="check_in" id="check_in">
+        <div class="w-full lg:w-3/4 mb-8 p-6 rounded-xl shadow-lg bg-gradient-to-r from-blue-300 to-blue-500">
+            <h2 class="mt-3 pt-5 mb-5 text-center font-bold text-4xl text-white drop-shadow-lg">Book {{ room }} Room</h2>
+
+            <form method="post" class="col-lg-12 mb-4 p-8 rounded-lg shadow-xl bg-white"> 
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div>
+                        <label for="check_in" class="block text-gray-700 font-medium">Check-In Date</label>
+                        <input type="date" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" name="check_in" id="check_in">
                     </div>
-                    <div class="mb-4">
-                        <label for="check_out" class="block text-gray-700"> Check-Out Date </label>
-                        <input type="date" class="w-full border rounded px-3 py-2 shadow-none" name="check_out" id="check_out">
+
+                    <div>
+                        <label for="check_out" class="block text-gray-700 font-medium">Check-Out Date</label>
+                        <input type="date" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" name="check_out" id="check_out">
                     </div>
-                    <div class="mb-4">
-                        <label for="price" class="block text-gray-700">Total Price</label>
-                        <input name="total_price" id="totalPrice" required type="text" class="w-full border rounded px-3 py-2" readonly />
+
+                    <div>
+                        <label for="price" class="block text-gray-700 font-medium">Total Price</label>
+                        <input name="total_price" id="totalPrice" required type="text" class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-600" readonly />
                     </div>
-                    <div class="mb-4">
-                        <label for="payment_method" class="block text-gray-700">Payment Method</label>
-                        <select id="id_payment_method" name="payment_method" class="w-full border rounded px-3 py-2">
+
+                    <div>
+                        <label for="payment_method" class="block text-gray-700 font-medium">Payment Method</label>
+                        <select id="id_payment_method" name="payment_method" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400">
                             <option value="CASH">Cash-on</option>
-                            <option value="ONLINE">Online</option>
+                            <option value="E-Payment">E-Payment</option>
+                            <option value="Check">Check</option>
+
                         </select>
                     </div>
                 </div>
-                <div class="flex justify-center mt-5">
-                    <button type="submit" class="bg-blue-600 hover:bg-violet-500 text-white px-4 py-2 rounded shadow-md">Submit</button> <!-- Change type to submit -->
+                <div id="checkFields" class="hidden mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="check_no" class="block text-gray-700 font-medium">Check Number</label>
+                        <input type="text" name="check_no" id="check_no" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" placeholder="Enter Check Number">
+                    </div>
+                
+                    <div>
+                        <label for="bank_name" class="block text-gray-700 font-medium">Bank Name</label>
+                        <input type="text" name="bank_name" id="bank_name" class="w-full border border-gray-300 rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400" placeholder="Enter Bank Name">
+                    </div>
+                </div>
+                
+
+                <div class="flex justify-center mt-6">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-300">
+                        Book Now
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 <script>
     // Get references to the check-in and check-out date input fields
     var checkInInput = document.getElementById('check_in');
@@ -64,10 +87,21 @@
 
         // Calculate the total price
         var totalPrice = numberOfDays * roomPrice;
-        if (!isNaN(totalPrice)) {
-            // Display the total price in the HTML element
+        if (!isNaN(totalPrice) && totalPrice > 0) {
             document.getElementById('totalPrice').value = totalPrice.toFixed(2);
+        } else {
+            document.getElementById('totalPrice').value = "0.00";
         }
     }
+    // Show/Hide check fields based on payment method
+document.getElementById('id_payment_method').addEventListener('change', function () {
+    var checkFields = document.getElementById('checkFields');
+    if (this.value === 'Check') {
+        checkFields.classList.remove('hidden');
+    } else {
+        checkFields.classList.add('hidden');
+    }
+});
+
 </script>
 {% endblock %}

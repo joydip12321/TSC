@@ -3,8 +3,6 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import User
 
-
-
 class UserProfile(models.Model):
     USER_ROLES = [
         ('student', 'Student'),
@@ -14,21 +12,18 @@ class UserProfile(models.Model):
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=USER_ROLES)
-    phone = models.CharField(max_length=15, null=True, blank=True)  # Add phone number field
-    # Fields for guest role
-    national_id = models.CharField(max_length=20, null=True, blank=True)  # Reference National ID
-    reference_name = models.CharField(max_length=100, null=True, blank=True)  # Reference Name
-    ref_contact = models.CharField(max_length=15, null=True, blank=True)  # Reference Contact
-    ref_role = models.CharField(max_length=50, null=True, blank=True)  # Reference Role
-    ref_dept_name = models.CharField(max_length=100, null=True, blank=True)  # Reference Department Name
+    phone = models.CharField(max_length=15, null=True, blank=True)  
+    national_id = models.CharField(max_length=20, null=True, blank=True) 
+    reference_name = models.CharField(max_length=100, null=True, blank=True) 
+    ref_contact = models.CharField(max_length=15, null=True, blank=True)  
+    ref_role = models.CharField(max_length=50, null=True, blank=True) 
+    ref_dept_name = models.CharField(max_length=100, null=True, blank=True) 
 
-    # Fields for student role
-    student_id = models.CharField(max_length=20, null=True, blank=True)  # Student ID
-    student_dept_name = models.CharField(max_length=100, null=True, blank=True)  # Student Department Name
-    student_session = models.CharField(max_length=20, null=True, blank=True)  # Student Session
+    student_id = models.CharField(max_length=20, null=True, blank=True)  
+    student_dept_name = models.CharField(max_length=100, null=True, blank=True) 
+    student_session = models.CharField(max_length=20, null=True, blank=True) 
 
-    # Fields for teacher role
-    teacher_id = models.CharField(max_length=20, null=True, blank=True)  # Teacher ID
+    teacher_id = models.CharField(max_length=20, null=True, blank=True)  
     teacher_dept_name = models.CharField(max_length=100, null=True, blank=True) 
 
     def __str__(self):
@@ -70,6 +65,7 @@ class Booking(models.Model):
     PAYMENT_CHOICES = [
         ('CASH', 'CASH'),
         ('E-Payment', 'E-Payment'),
+        ('Check','Check')
     ]
     booking_id = models.AutoField(primary_key=True)
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
@@ -79,19 +75,33 @@ class Booking(models.Model):
     check_out=models.DateTimeField()
     tot_price=models.IntegerField(default=0)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='CASH')
+    check_no = models.CharField(max_length=50, null=True, blank=True)
+    bank_name = models.CharField(max_length=100, null=True, blank=True)
     confirmed = models.IntegerField(default=0) 
     role=models.CharField(max_length=10,default="Student")
     def __str__(self):
         return self.room.room
 
-class MenuItem(models.Model):
-    name = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
-    image = models.ImageField(upload_to='img/')
-    description=models.CharField(max_length=40)
+
+
+class MealTime(models.Model):  
+    name = models.CharField(max_length=20, unique=True) 
 
     def __str__(self):
         return self.name
+
+
+class MenuItem(models.Model):
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=6, decimal_places=2) 
+    image = models.ImageField(upload_to='menu_images/')
+    description = models.CharField(max_length=255)  
+    meal_times = models.ManyToManyField(MealTime, related_name="menu_items") 
+
+    def __str__(self):
+        return f"{self.name} ({', '.join(meal.name for meal in self.meal_times.all())})"
+
+
 
 class Orders(models.Model):
     STATUS =(
@@ -100,8 +110,8 @@ class Orders(models.Model):
         ('Out for Delivery','Out for Delivery'),
         ('Delivered','Delivered'),
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Change to ForeignKey
-    items_summary = models.TextField(null=True)  # Add this for order summary
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    items_summary = models.TextField(null=True)  
     email = models.CharField(max_length=50,null=True)
     role = models.CharField(max_length=20,null=True)
     location = models.CharField(max_length=500,null=True)
@@ -115,10 +125,10 @@ class Orders(models.Model):
     
 
 class Notification(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Link to the User model
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    read = models.BooleanField(default=False)  # Field to track if the notification is read
+    read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Notification for {self.user.username} at {self.timestamp}"

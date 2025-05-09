@@ -2,71 +2,96 @@
 
 {% block first %}
 
-<!-- Search Section -->
-<div class="container mx-auto p-4">
-    <div class="row">
-        <div class="col-lg-12 mb-4 p-8 rounded shadow-lg bg-blue-200 items-center justify-center">
-            <h4 class="text-center text-2xl font-semibold mb-6 text-gray-700">Search Rooms</h4>
-            <form method="post" class="space-y-2">
-                {% csrf_token %}
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="mb-3">
-                        <label for="room" class="block text-gray-600 mb-2">Room Number</label>
-                        <input type="text" value="{{room_name}}" class="form-control shadow-none w-2/3 border border-gray-300 rounded px-3 py-2" name="room" id="room" placeholder="Enter room name or number">
-                    </div>
-                    <div class="mb-3">
-                        <label for="status" class="block text-gray-600 mb-2">Room Status (Optional)</label>
-                        <select class="form-control shadow-none w-2/3 border rounded px-3 py-2" name="status" id="status">
-                            <option value="" disabled {% if not status %}selected{% endif %}>Select Status</option>
-                            <option value="Available for booking" {% if status == "Available for booking" %}selected{% endif %}>Available for booking</option>
-                            <option value="Not available currently" {% if status == "Not available currently" %}selected{% endif %}>Not available currently</option>
-                            <option value="Not for Booking" {% if status == "Not for Booking" %}selected{% endif %}>Not for Booking</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3 flex items-end">
-                        <button type="submit" class="btn btn-primary w-1/2 bg-blue-500 text-white font-semibold py-2 rounded shadow hover:bg-blue-600 transition duration-200">Submit</button>
-                    </div>
+<!-- Search Rooms Section -->
+<div class="container mx-auto px-4 py-6">
+    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+        <h4 class="text-center text-2xl font-semibold text-gray-700 mb-4">Search Rooms</h4>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Room Number -->
+                <div>
+                    <label for="room" class="block text-gray-600 text-sm font-medium mb-1">Room Number</label>
+                    <input type="text" value="{{ room_name }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition" name="room" id="room" placeholder="Enter room name or number">
                 </div>
-            </form>
-        </div>
+
+                <!-- Room Status -->
+                <div>
+                    <label for="status" class="block text-gray-600 text-sm font-medium mb-1">Room Status</label>
+                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition" name="status" id="status">
+                        <option value="" disabled {% if not status %}selected{% endif %}>Select Status</option>
+                        <option value="Available for booking" {% if status == "Available for booking" %}selected{% endif %}>Available</option>
+                        <option value="Not available currently" {% if status == "Not available currently" %}selected{% endif %}>Not Available</option>
+                        <option value="Not for Booking" {% if status == "Not for Booking" %}selected{% endif %}>Not for Booking</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex items-end">
+                    <button type="submit" class="w-full md:w-auto px-6 py-2 bg-blue-600 text-white font-medium text-sm rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- Club Societies Rooms Section -->
-<h2 class="mt-3 pt-5 mb-5 text-center font-bold text-3xl text-blue-900">Club Societies Rooms</h2>
 
-<div class="container mx-auto mt-10">
+<!-- Club Societies Rooms Section -->
+<h2 class="mt-6 text-center font-bold text-3xl text-blue-900">Club Societies Rooms</h2>
+<hr class="w-1/3 mx-auto mt-3 border-blue-400">
+
+<div class="container mx-auto mt-5">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {% for room in room %}
-        <div class="flex flex-col">
-            <div class="bg-teal-500 rounded-lg shadow-md overflow-hidden" data-aos="fade-up" data-aos-duration="800" data-aos-easing="ease-in-sine" data-aos-delay="200">
-                <img src="{{ room.img.url }}" alt="Room Image" class="h-64 w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Room No: {{ room.room }}</h3>
-                    <p class="text-gray-600 text-sm mb-4">{{ room.description }}</p>
+        <div class="transform transition duration-75 hover:scale-105 will-change-transform">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                
+                <!-- Room Image -->
+                <img src="{{ room.img.url }}" alt="Room Image" class="h-56 w-full object-cover hover:scale-105 transition-transform duration-75 ease-in-out" loading="lazy">
 
-                    <div class="flex items-center space-x-4">  <!-- Flex container with space between elements -->
-                        <span class="text-sm px-2 py-1 rounded-full 
-                                    {% if room.status == 'Available for booking' %}
-                                        bg-green-200 
-                                    {% elif room.status == 'Not available currently' %}
-                                        bg-yellow-400
-                                    {% else %}
-                                        bg-red-200 
-                                    {% endif %}">
-                                    {{ room.status }}
+                <!-- Room Details -->
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 truncate">Room No: {{ room.room }}</h3>
+
+                    <!-- Room Type Badge -->
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <span class="bg-blue-600 text-white text-xs px-3 py-1 rounded-md font-semibold">
+                            {{ room.roomtype }}
                         </span>
-                    
-                        <!-- Conditionally display the button if the room is available for booking -->
+                    </div>
+                    <p class="text-gray-700 text-sm mt-2">{{ room.description }}</p>
+
+                    <!-- Capacity & Status -->
+                    <p class="text-sm text-gray-700 mt-2">👥 Capacity: <span class="font-medium">{{ room.capacity }} persons</span></p>
+                    <p class="text-sm text-gray-700">🏨 Status: 
+                        <span class="font-medium {% if room.status == 'Available for booking' %} text-green-600 {% elif room.status == 'Not available currently' %} text-yellow-600 {% else %} text-red-600 {% endif %}">
+                            {{ room.status }}
+                        </span>
+                    </p>
+
+                    <!-- Price & Booking -->
+                    <div class="flex justify-between items-center mt-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">Price</p>
+                            <p class="text-xl font-bold">৳{{ room.price }} <span class="text-sm text-gray-500">/ year</span></p>
+                        </div>
+                        
+                        <!-- Booking Button -->
                         {% if room.status == 'Available for booking' %}
-                            <button onclick="confirmBooking('{{ room.room }}')" class="bg-blue-600 hover:bg-violet-500 text-white px-4 py-2 rounded shadow-md">Request for Book</button>
+                        <a href="{% url 'club_room' room.room %}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow-md text-sm">
+                            Book Now
+                        </a>
                         {% endif %}
                     </div>
-                    
                 </div>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center text-gray-600 col-span-full">No rooms available for the selected floor.</p>
         {% endfor %}
     </div>
 </div>

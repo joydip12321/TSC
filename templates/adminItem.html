@@ -21,6 +21,7 @@
                 <th class="py-2 px-4 border">Name</th>
                 <th class="py-2 px-4 border">Price</th>
                 <th class="py-2 px-4 border">Description</th>
+                <th class="py-2 px-4 border">Meal Time</th>  <!-- ✅ Added Meal Time Column -->
                 <th class="py-2 px-4 border">Actions</th>
             </tr>
         </thead>
@@ -38,6 +39,13 @@
                 <td class="py-2 px-4 border"><i class="fa-solid fa-bangladeshi-taka-sign"></i>{{ item.price }}</td>
                 <td class="py-2 px-4 border">{{ item.description }}</td>
                 <td class="py-2 px-4 border">
+                    {% for meal_time in item.meal_times.all %}
+                        <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm">{{ meal_time.name }}</span>
+                    {% empty %}
+                        <span class="text-gray-500">No meal time assigned</span>
+                    {% endfor %}
+                </td>
+                <td class="py-2 px-4 border">
                     <a href="{% url 'update_item' item.id %}" class="text-blue-500 hover:text-blue-700">
                         <svg class="w-6 h-6 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 4.379l5.5 5.5-1.414 1.415-5.5-5.5 1.414-1.415zM4 20h16v-2H4v2z"></path></svg>
                     </a>
@@ -48,6 +56,10 @@
                         </button>
                     </form>
                 </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-4">No menu items found.</td>
             </tr>
             {% endfor %}
         </tbody>
